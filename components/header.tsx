@@ -52,20 +52,20 @@ export default function Header() {
           : "bg-background"
       }`}
     >
-      <div className="mx-auto flex max-w-screen-2xl items-center justify-between p-4">
+      <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-4 lg:px-8">
         <div className="flex items-center space-x-2 hover:cursor-pointer hover:opacity-80">
           <Rocket className="size-6" />
           <Link href="/" className="text-xl font-bold">
-            Mckay's App Template
+            Myles' Google Ads SaaS Template
           </Link>
         </div>
 
-        <nav className="absolute left-1/2 hidden -translate-x-1/2 space-x-2 font-semibold md:flex">
+        <nav className="absolute left-1/2 hidden -translate-x-1/2 space-x-1 font-medium md:flex">
           {navLinks.map(link => (
             <Link
               key={link.href}
               href={link.href}
-              className="rounded-full px-3 py-1 hover:opacity-80"
+              className="text-muted-foreground hover:text-foreground rounded-md px-3 py-2 text-sm"
             >
               {link.label}
             </Link>
@@ -76,7 +76,7 @@ export default function Header() {
               <Link
                 key={link.href}
                 href={link.href}
-                className="rounded-full px-3 py-1 hover:opacity-80"
+                className="text-muted-foreground hover:text-foreground rounded-md px-3 py-2 text-sm"
               >
                 {link.label}
               </Link>
@@ -88,12 +88,25 @@ export default function Header() {
           <ThemeSwitcher />
 
           <SignedOut>
-            <SignInButton>
-              <Button variant="outline">Login</Button>
-            </SignInButton>
+            <div className="hidden sm:block">
+              <SignInButton>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="text-sm font-medium"
+                >
+                  Login
+                </Button>
+              </SignInButton>
+            </div>
 
             <SignUpButton>
-              <Button className="bg-blue-500 hover:bg-blue-600">Sign Up</Button>
+              <Button
+                size="sm"
+                className="bg-black text-sm font-medium text-white hover:bg-gray-800"
+              >
+                Sign Up
+              </Button>
             </SignUpButton>
           </SignedOut>
 
@@ -109,9 +122,9 @@ export default function Header() {
               aria-label="Toggle menu"
             >
               {isMenuOpen ? (
-                <X className="size-6" />
+                <X className="size-5" />
               ) : (
-                <Menu className="size-6" />
+                <Menu className="size-5" />
               )}
             </Button>
           </div>
@@ -119,12 +132,12 @@ export default function Header() {
       </div>
 
       {isMenuOpen && (
-        <nav className="bg-primary-foreground text-primary p-4 md:hidden">
-          <ul className="space-y-2">
+        <nav className="bg-background border-t p-4 md:hidden">
+          <ul className="space-y-3">
             <li>
               <Link
                 href="/"
-                className="block hover:underline"
+                className="text-muted-foreground hover:text-foreground block text-sm font-medium"
                 onClick={toggleMenu}
               >
                 Home
@@ -134,7 +147,7 @@ export default function Header() {
               <li key={link.href}>
                 <Link
                   href={link.href}
-                  className="block hover:underline"
+                  className="text-muted-foreground hover:text-foreground block text-sm font-medium"
                   onClick={toggleMenu}
                 >
                   {link.label}
@@ -146,7 +159,7 @@ export default function Header() {
                 <li key={link.href}>
                   <Link
                     href={link.href}
-                    className="block hover:underline"
+                    className="text-muted-foreground hover:text-foreground block text-sm font-medium"
                     onClick={toggleMenu}
                   >
                     {link.label}
@@ -154,6 +167,19 @@ export default function Header() {
                 </li>
               ))}
             </SignedIn>
+            <SignedOut>
+              <li className="pt-2">
+                <SignInButton>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="w-full text-sm font-medium"
+                  >
+                    Login
+                  </Button>
+                </SignInButton>
+              </li>
+            </SignedOut>
           </ul>
         </nav>
       )}
