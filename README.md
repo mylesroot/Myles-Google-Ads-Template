@@ -1,12 +1,6 @@
-# Mckay's App Template
+# Myles' Google Ads Template
 
-This is a full-stack app template for courses on [Takeoff](https://JoinTakeoff.com/).
-
-## Sponsors
-
-If you are interested in sponsoring my repos, please contact me at [ads@takeoffai.org](mailto:ads@takeoffai.org).
-
-Or sponsor me directly on [GitHub Sponsors](https://github.com/sponsors/mckaywrigley).
+This is a full-stack app template for that has been slightly modified from Mckay Wrigley's app template (https://github.com/mckaywrigley)
 
 ## Tech Stack
 
@@ -56,6 +50,9 @@ NEXT_PUBLIC_STRIPE_PAYMENT_LINK_MONTHLY=
 # Analytics (PostHog)
 NEXT_PUBLIC_POSTHOG_KEY=
 NEXT_PUBLIC_POSTHOG_HOST=
+
+# Google Ads
+GOOGLE_ADS_DEVELOPER_TOKEN=
 ```
 
 ## Setup
