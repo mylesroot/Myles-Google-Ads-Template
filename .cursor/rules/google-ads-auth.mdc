@@ -1,0 +1,105 @@
+---
+description: Follow these rules when using the Google Ads API.
+globs: 
+alwaysApply: false
+---
+# Google Ads OAuth Implementation Plan
+
+## Overview
+
+We use Clerk to handle OAuth with Google Ads. Clerk manages token refresh and storage, while we maintain minimal account data in our database.
+
+## 1. Configure Clerk OAuth Settings
+
+- Add Google OAuth provider in Clerk dashboard
+- Configure required scopes: `https://www.googleapis.com/auth/adwords`
+- Set up proper redirect URIs
+
+## 2. Database Storage
+
+- Store only Google Ads account IDs and metadata
+- Do not store OAuth tokens (managed by Clerk)
+
+
+## 4. Create Google Ads API Client in lib/google-ads/client.ts
+
+
+## 6. Server-Side Actions
+
+```typescript
+// actions/google-ads/google-ads-actions.ts
+import { auth } from "@clerk/nextjs/server"
+import { getGoogleAdsClient } from "@/utils/google-ads/client"
+
+export async function getCustomerAccounts() {
+  const { userId } = auth()
+  if (!userId) throw new Error("Not authenticated")
+
+  const client = await getGoogleAdsClient(userId)
+  return client.request("/v14/customers:listAccessibleCustomers")
+}
+```
+
+# Google Ads API v18 - Account Hierarchy Guide
+
+## Overview
+
+This guide explains how to fetch and build a tree structure of Google Ads accounts, showing Manager Customer Centers (MCCs) and their child accounts.
+
+## API Endpoints
+
+### 1. Get All Accessible Accounts
+
+```typescript
+GET /v18/customers:listAccessibleCustomers
+```
+
+### 2. Get Account Details
+
+```typescript
+POST /v18/customers/{customerId}/googleAds:search
+```
+
+## Required Fields
+
+Use these exact fields in your GAQL query:
+
+```sql
+SELECT
+  customer_client.id,
+  customer_client.descriptive_name,
+  customer_client.status,
+  customer_client.manager,
+  customer_client.level,
+  customer_client.client_customer
+FROM customer_client
+WHERE customer_client.status = "ENABLED"
+ORDER BY customer_client.level ASC
+```
+
+## Understanding the Response
+
+1. MCC Detection:
+
+   - An account is an MCC if `customer_client.manager = true`
+   - MCCs can have child accounts
+
+2. Parent-Child Relationships:
+
+   - Check the `resourceName` in the response
+   - Format: `customers/[PARENT_ID]/customerClients/[CHILD_ID]`
+   - If `PARENT_ID` is different from `CHILD_ID`, it's a child account
+   - Example: `customers/9735970811/customerClients/4455287673` means account `4455287673` is a child of `9735970811`
+
+3. Building the Tree:
+   - Store all accounts in a Map
+   - Don't overwrite accounts that already have parent relationships
+   - Use `level` field for hierarchy depth (0 = root, 1 = child)
+   - Sort by name within each level
+
+## Headers
+
+- Content-Type: application/json
+- Authorization: Bearer {token}
+- developer-token: {GOOGLE_ADS_DEVELOPER_TOKEN}
+- login-customer-id: {MCC_ID} (Required when accessing child accounts through an MCC)

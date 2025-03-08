@@ -1,6 +1,7 @@
 ---
 description: Follow these rules when working on the backend.
 globs: 
+alwaysApply: false
 ---
 ### Backend Rules
 
@@ -246,3 +247,50 @@ export async function deleteTodoAction(id: string): Promise<ActionState<void>> {
   }
 }
 ```
+
+## Supabase x Clerk RLS
+
+We use Clerk for authentication instead of Supabase's built-in auth system. Here's how to set it up:
+
+### Database Setup
+
+1. Create the requesting_user_id() function in Supabase to get the user ID from Clerk:
+
+```sql
+CREATE OR REPLACE FUNCTION requesting_user_id()
+RETURNS TEXT AS $$
+    SELECT NULLIF(
+        current_setting('request.jwt.claims', true)::json->>'sub',
+        ''
+    )::text;
+$$ LANGUAGE SQL STABLE;
+```
+
+2. When writing RLS policies in schema files, use this check:
+
+```sql
+requesting_user_id() = user_id
+```
+
+3. If adding policies to an existing schema, make sure to generate the SQL code for the policies in a new migration file in `/db/custom-migrations` following the existing naming pattern (XXXX_adjective_noun.sql). Drizzle cannot generate the SQL code for the policies using db:generate.
+
+### Client Integration
+
+There are two ways to integrate Clerk with Supabase:
+
+1. **Server-Side (Recommended)**:
+
+   - Create a reusable client utility that injects the Clerk token into Supabase requests
+   - Use `auth()` from '@clerk/nextjs/server'
+   - Implement in server components and Server Actions
+
+2. **Client-Side**:
+   - Use `useSession()` and `useUser()` hooks from '@clerk/nextjs'
+   - Create a custom Supabase client that injects the Clerk token
+   - Only use when client-side data fetching is absolutely necessary
+
+For both approaches:
+
+- Always use the custom client instead of the default Supabase client
+- The Clerk token is automatically injected into request headers
+- RLS policies will work seamlessly with the requesting_user_id() function
