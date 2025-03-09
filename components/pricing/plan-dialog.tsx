@@ -140,8 +140,8 @@ export function PlanDialog({ isOpen, onClose, currentPlan }: PlanDialogProps) {
         body: JSON.stringify({
           priceId,
           mode: "subscription",
-          successUrl: window.location.origin + "/dashboard?checkout=success",
-          cancelUrl: window.location.origin + "/dashboard?checkout=canceled"
+          successUrl: window.location.origin + "/rsa-writer?checkout=success",
+          cancelUrl: window.location.origin + "/rsa-writer?checkout=canceled"
         })
       })
 
@@ -185,8 +185,8 @@ export function PlanDialog({ isOpen, onClose, currentPlan }: PlanDialogProps) {
         body: JSON.stringify({
           priceId,
           mode: "payment", // One-time payment
-          successUrl: window.location.origin + "/dashboard?checkout=success",
-          cancelUrl: window.location.origin + "/dashboard?checkout=canceled"
+          successUrl: window.location.origin + "/rsa-writer?checkout=success",
+          cancelUrl: window.location.origin + "/rsa-writer?checkout=canceled"
         })
       })
 
