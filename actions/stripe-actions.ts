@@ -100,12 +100,21 @@ export const manageSubscriptionStatusChange = async (
       membership
     )
 
+    // Determine the appropriate credits value
+    let creditsToSet = credits.toString()
+
+    // If downgrading to free plan due to subscription cancellation/expiration,
+    // reset credits to the default free amount (5)
+    if (membershipStatus === "free" && membership !== "free") {
+      creditsToSet = "5"
+    }
+
     const updateResult = await updateProfileByStripeCustomerIdAction(
       customerId,
       {
         stripeSubscriptionId: subscription.id,
         membership: membershipStatus,
-        credits: credits.toString()
+        credits: creditsToSet
       }
     )
 

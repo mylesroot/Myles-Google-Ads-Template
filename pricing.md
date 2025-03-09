@@ -37,11 +37,6 @@ Supbase monthly subscription = $35
 - Team collaboration features
 - Advanced analytics
 
-### Credit Top-ups (available on all paid plans)
-
-- 20 additional credits: $2.99 (≈ $0.15 per credit)
-- 100 additional credits: $12.99 (≈ $0.13 per credit)
-
 This structure provides a very affordable entry point at $5 while maintaining good margins. The free tier serves as a trial, and the pricing tiers scale reasonably as users need more credits and features.
 
 You would need about 7-8 users on the Business plan (or equivalent revenue from mixed plans) to cover your Supabase fixed costs, with additional users contributing directly to profit.

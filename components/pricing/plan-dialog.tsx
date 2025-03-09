@@ -5,10 +5,11 @@ import {
   DialogContent,
   DialogDescription,
   DialogHeader,
-  DialogTitle
+  DialogTitle,
+  DialogFooter
 } from "@/components/ui/dialog"
 import { Button } from "@/components/ui/button"
-import { CheckIcon, ArrowRight, Loader2 } from "lucide-react"
+import { CheckIcon, ArrowRight, Loader2, CreditCard } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { useState } from "react"
 import { useRouter } from "next/navigation"
@@ -30,31 +31,15 @@ interface PlanTier {
   planId: string
 }
 
-// Define prices for each plan and credit pack
+// Define prices for each plan
 const STRIPE_PRICES = {
   starter: process.env.NEXT_PUBLIC_STRIPE_STARTER_PRICE_ID,
   pro: process.env.NEXT_PUBLIC_STRIPE_PRO_PRICE_ID,
-  agency: process.env.NEXT_PUBLIC_STRIPE_AGENCY_PRICE_ID,
-  credits_small: process.env.NEXT_PUBLIC_STRIPE_CREDITS_SMALL_PRICE_ID,
-  credits_large: process.env.NEXT_PUBLIC_STRIPE_CREDITS_LARGE_PRICE_ID
+  agency: process.env.NEXT_PUBLIC_STRIPE_AGENCY_PRICE_ID
 }
 
+// Remove the free plan from the array since we'll handle it separately
 const plans: PlanTier[] = [
-  {
-    name: "Free",
-    description: "Basic functionality",
-    price: "$0",
-    period: "forever",
-    credits: 5,
-    planId: "free",
-    buttonText: "Current Plan",
-    features: [
-      { text: "5 credits/month" },
-      { text: "Basic functionality" },
-      { text: "No rollover of unused credits" },
-      { text: "Community support only" }
-    ]
-  },
   {
     name: "Starter",
     description: "For individuals getting started",
@@ -116,10 +101,35 @@ export function PlanDialog({ isOpen, onClose, currentPlan }: PlanDialogProps) {
   const [loading, setLoading] = useState<string | null>(null)
   const router = useRouter()
   const { toast } = useToast()
+  const isPaidPlan = ["starter", "pro", "agency"].includes(currentPlan)
+
+  const handleBillingPortal = () => {
+    const portalUrl = process.env.NEXT_PUBLIC_STRIPE_PORTAL_LINK
+    if (portalUrl) {
+      window.location.href = portalUrl
+    } else {
+      toast({
+        title: "Error",
+        description: "Billing portal not configured. Please contact support.",
+        variant: "destructive"
+      })
+    }
+  }
 
   const handleUpgrade = async (planId: string) => {
-    // Skip if it's the current plan or free plan
-    if (planId === currentPlan || planId === "free") {
+    // Skip if it's the current plan
+    if (planId === currentPlan) {
+      return
+    }
+
+    // Handle downgrading to free plan
+    if (planId === "free") {
+      // You might want to add a confirmation step here
+      toast({
+        title: "Downgrading to Free Plan",
+        description: "Please contact support to downgrade your plan.",
+        variant: "default"
+      })
       return
     }
 
@@ -165,51 +175,6 @@ export function PlanDialog({ isOpen, onClose, currentPlan }: PlanDialogProps) {
     }
   }
 
-  const handleBuyCredits = async (
-    packageId: "credits_small" | "credits_large"
-  ) => {
-    setLoading(packageId)
-
-    try {
-      const priceId = STRIPE_PRICES[packageId]
-
-      if (!priceId) {
-        throw new Error(`No price ID found for credits package: ${packageId}`)
-      }
-
-      const response = await fetch("/api/stripe/create-checkout", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify({
-          priceId,
-          mode: "payment", // One-time payment
-          successUrl: window.location.origin + "/rsa-writer?checkout=success",
-          cancelUrl: window.location.origin + "/rsa-writer?checkout=canceled"
-        })
-      })
-
-      if (!response.ok) {
-        throw new Error("Failed to create checkout session")
-      }
-
-      const data = await response.json()
-
-      // Redirect to Stripe Checkout
-      router.push(data.url)
-    } catch (error) {
-      console.error("Error creating checkout session:", error)
-      toast({
-        title: "Error",
-        description: "Failed to create checkout session. Please try again.",
-        variant: "destructive"
-      })
-    } finally {
-      setLoading(null)
-    }
-  }
-
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="sm:max-w-3xl">
@@ -222,7 +187,29 @@ export function PlanDialog({ isOpen, onClose, currentPlan }: PlanDialogProps) {
           </DialogDescription>
         </DialogHeader>
 
-        <div className="grid grid-cols-1 gap-4 py-4 md:grid-cols-2 lg:grid-cols-4">
+        {isPaidPlan && (
+          <div className="mb-4 rounded-lg border border-blue-200 bg-blue-50 p-4 dark:border-blue-800 dark:bg-blue-950">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center space-x-2">
+                <CreditCard className="size-5 text-blue-600 dark:text-blue-400" />
+                <span className="text-blue-800 dark:text-blue-300">
+                  You're currently on the{" "}
+                  {currentPlan.charAt(0).toUpperCase() + currentPlan.slice(1)}{" "}
+                  plan
+                </span>
+              </div>
+              <Button
+                onClick={handleBillingPortal}
+                variant="secondary"
+                className="bg-blue-100 text-blue-700 hover:bg-blue-200 dark:bg-blue-900 dark:text-blue-200 dark:hover:bg-blue-800"
+              >
+                Manage Your Billing
+              </Button>
+            </div>
+          </div>
+        )}
+
+        <div className="grid grid-cols-1 gap-4 py-4 md:grid-cols-2 lg:grid-cols-3">
           {plans.map(plan => (
             <div
               key={plan.name}
@@ -308,59 +295,22 @@ export function PlanDialog({ isOpen, onClose, currentPlan }: PlanDialogProps) {
           ))}
         </div>
 
-        <div className="mt-4 border-t pt-4">
-          <h4 className="mb-2 font-medium">Credit Top-ups</h4>
-          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-            <div className="rounded-md border p-4">
-              <div className="flex items-center justify-between">
-                <div>
-                  <h5 className="font-medium">20 additional credits</h5>
-                  <p className="text-muted-foreground text-sm">
-                    $2.99 (≈ $0.15 per credit)
-                  </p>
-                </div>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => handleBuyCredits("credits_small")}
-                  disabled={loading !== null || currentPlan === "free"}
-                >
-                  {loading === "credits_small" ? (
-                    <Loader2 className="size-4 animate-spin" />
-                  ) : (
-                    "Buy Credits"
-                  )}
-                </Button>
-              </div>
-            </div>
-            <div className="rounded-md border p-4">
-              <div className="flex items-center justify-between">
-                <div>
-                  <h5 className="font-medium">100 additional credits</h5>
-                  <p className="text-muted-foreground text-sm">
-                    $12.99 (≈ $0.13 per credit)
-                  </p>
-                </div>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => handleBuyCredits("credits_large")}
-                  disabled={loading !== null || currentPlan === "free"}
-                >
-                  {loading === "credits_large" ? (
-                    <Loader2 className="size-4 animate-spin" />
-                  ) : (
-                    "Buy Credits"
-                  )}
-                </Button>
-              </div>
-            </div>
-          </div>
-          {currentPlan === "free" && (
-            <p className="text-muted-foreground mt-2 text-xs">
-              * Credit top-ups are only available for paid plans
-            </p>
-          )}
+        {/* Free plan option at the bottom */}
+        <div className="mt-4 border-t pt-4 text-center">
+          <p className="text-muted-foreground mb-2 text-sm">
+            Not ready for a paid plan?
+          </p>
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => handleUpgrade("free")}
+            disabled={currentPlan === "free" || loading !== null}
+            className={cn(
+              currentPlan === "free" && "bg-green-50 text-green-700"
+            )}
+          >
+            {currentPlan === "free" ? "Current Free Plan" : "Stay on Free Plan"}
+          </Button>
         </div>
       </DialogContent>
     </Dialog>

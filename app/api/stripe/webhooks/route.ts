@@ -16,8 +16,7 @@ import Stripe from "stripe"
 const relevantEvents = new Set([
   "checkout.session.completed",
   "customer.subscription.updated",
-  "customer.subscription.deleted",
-  "payment_intent.succeeded"
+  "customer.subscription.deleted"
 ])
 
 export async function POST(req: Request) {
@@ -47,10 +46,6 @@ export async function POST(req: Request) {
 
         case "checkout.session.completed":
           await handleCheckoutSession(event)
-          break
-
-        case "payment_intent.succeeded":
-          await handlePaymentIntent(event)
           break
 
         default:
@@ -100,54 +95,5 @@ async function handleCheckoutSession(event: Stripe.Event) {
       subscription.customer as string,
       productId
     )
-  } else if (checkoutSession.mode === "payment") {
-    // Handle one-time payment for credit top-ups
-    await handleOneTimePayment(checkoutSession)
-  }
-}
-
-async function handlePaymentIntent(event: Stripe.Event) {
-  const paymentIntent = event.data.object as Stripe.PaymentIntent
-
-  // If this payment intent is for a credit top-up (check metadata)
-  if (paymentIntent.metadata.type === "credit_topup") {
-    const customerId = paymentIntent.customer as string
-    const creditAmount = parseInt(paymentIntent.metadata.credits || "0")
-
-    // Query the database directly for user profile information instead of using Stripe
-    const { data: userProfile } = await updateProfileByStripeCustomerIdAction(
-      customerId,
-      {
-        credits: creditAmount.toString() // Add the credits directly
-      }
-    )
-  }
-}
-
-async function handleOneTimePayment(session: Stripe.Checkout.Session) {
-  // Get the line items to determine what was purchased
-  const lineItems = await stripe.checkout.sessions.listLineItems(session.id)
-
-  // Find the credit top-up product
-  const item = lineItems.data[0]
-  if (!item) return
-
-  // Get the product details to find the metadata with credit amount
-  const productId = item.price?.product as string
-  const product = await stripe.products.retrieve(productId)
-  const creditAmount = product.metadata.credits
-    ? parseInt(product.metadata.credits)
-    : 0
-
-  if (creditAmount > 0) {
-    // Get the current user profile from the database
-    const customerId = session.customer as string
-
-    // Update credits directly with the database action
-    // This will add the credits to the existing amount
-    await updateProfileByStripeCustomerIdAction(customerId, {
-      // Use SQL increment operation instead of fetching current value
-      credits: `credits + ${creditAmount}`
-    })
   }
 }
