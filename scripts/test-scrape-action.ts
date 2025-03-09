@@ -92,9 +92,9 @@ async function scrapeUrlsForTest(
     }
 
     // Check if basic tier user has enough credits
-    if (profile.membership === "basic") {
+    if (profile.membership === "starter") {
       const credits = profile.credits ?? 0
-      if (credits < urlCount) {
+      if (Number(credits) < urlCount) {
         return {
           isSuccess: false,
           message: `Insufficient credits. You need ${urlCount} credits but have ${credits}.`,
@@ -124,9 +124,9 @@ async function scrapeUrlsForTest(
     await updateProjectAction(project.id, { status: "scraping" })
 
     // Deduct credits for basic tier users
-    if (profile.membership === "basic" && profile.credits !== null) {
+    if (profile.membership === "starter" && profile.credits !== null) {
       await updateProfileAction(TEST_USER_ID, {
-        credits: profile.credits - urlCount
+        credits: String(Number(profile.credits) - urlCount)
       })
     }
 
