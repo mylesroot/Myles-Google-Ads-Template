@@ -30,10 +30,12 @@ interface ScrapeResult {
 
 /**
  * Scrapes URLs from raw text input, creates a project, and stores the scraped data
+ * @param projectName Name of the project
  * @param rawInput Raw text input with URLs (one per line)
  * @returns ActionState with project ID and invalid URLs
  */
 export async function scrapeUrlsAction(
+  projectName: string,
   rawInput: string
 ): Promise<ActionState<ScrapeResult>> {
   try {
@@ -94,6 +96,7 @@ export async function scrapeUrlsAction(
     const projectResult = await createProjectAction({
       id: crypto.randomUUID(),
       userId,
+      name: projectName,
       urls: validUrls, // Only store valid URLs
       status: "pending"
     })

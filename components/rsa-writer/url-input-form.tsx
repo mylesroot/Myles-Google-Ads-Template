@@ -3,6 +3,7 @@
 import { useState } from "react"
 import { Button } from "@/components/ui/button"
 import { Textarea } from "@/components/ui/textarea"
+import { Input } from "@/components/ui/input"
 import {
   Card,
   CardContent,
@@ -21,6 +22,7 @@ interface UrlInputFormProps {
 }
 
 export function UrlInputForm({ onSuccess, onError }: UrlInputFormProps) {
+  const [projectName, setProjectName] = useState("")
   const [urlInput, setUrlInput] = useState("")
   const [isSubmitting, setIsSubmitting] = useState(false)
 
@@ -36,10 +38,19 @@ export function UrlInputForm({ onSuccess, onError }: UrlInputFormProps) {
       return
     }
 
+    if (!projectName.trim()) {
+      toast({
+        variant: "destructive",
+        title: "No project name provided",
+        description: "Please enter a project name"
+      })
+      return
+    }
+
     setIsSubmitting(true)
 
     try {
-      const result = await scrapeUrlsAction(urlInput)
+      const result = await scrapeUrlsAction(projectName, urlInput)
 
       if (!result.isSuccess) {
         throw new Error(result.message)
@@ -47,13 +58,14 @@ export function UrlInputForm({ onSuccess, onError }: UrlInputFormProps) {
 
       toast({
         title: "URLs submitted successfully",
-        description: `Project created with ${
+        description: `Project "${projectName}" created with ${
           result.data.invalidUrls.length > 0
             ? `${result.data.invalidUrls.length} invalid URLs`
             : "all valid URLs"
         }`
       })
 
+      setProjectName("")
       setUrlInput("")
 
       if (onSuccess) {
@@ -84,12 +96,12 @@ export function UrlInputForm({ onSuccess, onError }: UrlInputFormProps) {
       <CardHeader>
         <CardTitle>Submit URLs for Scraping</CardTitle>
         <CardDescription>
-          Enter one URL per line. We'll scrape the content and prepare it for
-          RSA generation.
+          Enter URLs and a project name. We'll scrape the content and prepare it
+          for RSA generation.
         </CardDescription>
       </CardHeader>
       <form onSubmit={handleSubmit}>
-        <CardContent>
+        <CardContent className="space-y-4">
           <Textarea
             placeholder="https://example.com/product1&#10;https://example.com/product2&#10;https://example.com/product3"
             value={urlInput}
@@ -98,6 +110,22 @@ export function UrlInputForm({ onSuccess, onError }: UrlInputFormProps) {
             className="resize-none"
             disabled={isSubmitting}
           />
+          <div>
+            <label
+              htmlFor="project-name"
+              className="mb-1 block text-sm font-medium"
+            >
+              Project Name (Used to organise your URLs)
+            </label>
+            <Input
+              id="project-name"
+              placeholder="Spring Sale Products / Men's Collection"
+              value={projectName}
+              onChange={e => setProjectName(e.target.value)}
+              disabled={isSubmitting}
+              required
+            />
+          </div>
         </CardContent>
         <CardFooter className="flex justify-end">
           <Button type="submit" disabled={isSubmitting}>

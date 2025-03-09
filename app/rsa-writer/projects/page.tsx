@@ -1,33 +1,65 @@
 "use server"
 
+import { Suspense } from "react"
 import { auth } from "@clerk/nextjs/server"
-import { redirect } from "next/navigation"
 import { getProjectsByUserIdAction } from "@/actions/db/projects-actions"
-import { CopyDisplay } from "@/components/rsa-writer/copy-display"
-import { GenerateCopyButton } from "@/components/rsa-writer/generate-copy-button"
-import { CopyEditor } from "@/components/rsa-writer/copy-editor"
+import { ProjectsOverview } from "@/components/rsa-writer/projects-overview"
+import { Card, CardContent } from "@/components/ui/card"
+import { Skeleton } from "@/components/ui/skeleton"
 
-export default async function DashboardPage() {
+export default async function ProjectsPage() {
+  return (
+    <div className="container py-6">
+      <Suspense fallback={<ProjectsOverviewSkeleton />}>
+        <ProjectsOverviewContent />
+      </Suspense>
+    </div>
+  )
+}
+
+async function ProjectsOverviewContent() {
   const { userId } = await auth()
-  if (!userId) redirect("/login")
+
+  if (!userId) {
+    throw new Error("Unauthorized")
+  }
 
   const projectsResult = await getProjectsByUserIdAction(userId)
-  if (!projectsResult.isSuccess) throw new Error("Failed to load projects")
-  const projects = projectsResult.data
 
+  if (!projectsResult.isSuccess) {
+    throw new Error(projectsResult.message)
+  }
+
+  return <ProjectsOverview projects={projectsResult.data} />
+}
+
+function ProjectsOverviewSkeleton() {
   return (
-    <div className="flex min-h-[calc(100vh-4rem)] flex-col items-center p-6 pt-16">
-      <div className="w-full max-w-4xl">
-        {projects.map(project => (
-          <div key={project.id} className="mb-8 rounded-lg border p-4">
-            <h2 className="text-xl font-semibold">Project: {project.id}</h2>
-            <p>Status: {project.status}</p>
-            <GenerateCopyButton projectId={project.id} />
-            <CopyDisplay project={project} />
-            <CopyEditor project={project} />
+    <Card>
+      <CardContent className="p-6">
+        <div className="mb-6 flex items-center justify-between">
+          <Skeleton className="h-8 w-48" />
+          <Skeleton className="h-10 w-36" />
+        </div>
+        <div className="space-y-4">
+          <div className="flex items-center justify-between">
+            <Skeleton className="h-5 w-1/4" />
+            <Skeleton className="h-5 w-1/6" />
+            <Skeleton className="h-5 w-1/6" />
+            <Skeleton className="h-5 w-1/6" />
+            <Skeleton className="h-5 w-1/12" />
           </div>
-        ))}
-      </div>
-    </div>
+          {Array.from({ length: 5 }).map((_, i) => (
+            <div key={i} className="flex items-center justify-between">
+              <Skeleton className="h-5 w-1/4" />
+              <Skeleton className="h-5 w-1/6" />
+              <Skeleton className="h-5 w-1/6" />
+              <Skeleton className="h-5 w-1/6" />
+              <Skeleton className="h-5 w-1/12" />
+            </div>
+          ))}
+        </div>
+      </CardContent>
+    </Card>
   )
 }

@@ -19,6 +19,7 @@ export const projectsTable = pgTable("projects", {
   userId: text("user_id")
     .references(() => profilesTable.userId)
     .notNull(),
+  name: text("name").default("Untitled Project"),
   urls: text("urls").array().notNull(),
   scrapedData: jsonb("scraped_data"),
   generatedCopy: jsonb("generated_copy"),

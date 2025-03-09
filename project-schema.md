@@ -30,7 +30,7 @@ The database schema is designed to support bulk processing, persistence for edit
 - `membership` enum enforces pricing tiers: `free` (trial, e.g., 5 generations), `basic` (100 credits), `pro` (unlimited).
 - `credits` tracks usage for `basic` users (1 credit per URL processed or regenerated; ignored for `pro`).
 - Stripe fields enable subscription management via webhooks.
-- Built on an existing `profiles` table, extended for this app’s needs.
+- Built on an existing `profiles` table, extended for this app's needs.
 
 ---
 
@@ -42,6 +42,7 @@ The database schema is designed to support bulk processing, persistence for edit
 | ---------------- | ----------- | ---------------------------------------------------------- | --------------------- |
 | `id`             | `uuid`      | Unique project ID                                          | Primary Key           |
 | `user_id`        | `text`      | Links to `profiles`                                        | Foreign Key, Not Null |
+| `name`           | `text`      | Project name (e.g., "Socks & Shoes Ads")                   | Not Null              |
 | `urls`           | `text[]`    | Array of input URLs                                        | Not Null              |
 | `scraped_data`   | `jsonb`     | Scraped data per URL                                       | Nullable              |
 | `generated_copy` | `jsonb`     | Ad copy (15 headlines, 4 descriptions)                     | Nullable              |
@@ -86,7 +87,7 @@ The database schema is designed to support bulk processing, persistence for edit
 
 - **History**: Logs each export, so users can track multiple attempts (e.g., `.csv` for review, then API for publishing).
 - **Separation**: Keeps export data distinct from `projects`, avoiding clutter and enabling multiple exports per project.
-- **User Value**: Supports a UI feature showing export history (e.g., “Exported as CSV [date]” or “Draft Campaign [ID]”).
+- **User Value**: Supports a UI feature showing export history (e.g., "Exported as CSV [date]" or "Draft Campaign [ID]").
 - **Scalability**: Easily extends to new export types (e.g., Meta Ads) via `export_type`.
 
 ---
@@ -123,8 +124,8 @@ The database schema is designed to support bulk processing, persistence for edit
 - **Workflow**: Users submit URLs → scrape → generate copy → save/edit/review → export, with credits deducted for `basic` tier.
 - **UI Hint**: Show project history (via `projects`) and export history (via `exports`) in the dashboard.
 
-This schema sets up a solid foundation for an MVP that’s both functional and marketable. Let me know if you need code snippets or deeper dives into any part!
+This schema sets up a solid foundation for an MVP that's both functional and marketable. Let me know if you need code snippets or deeper dives into any part!
 
 ---
 
-Hope this summary nails it for your developer! Let me know if you’d like any tweaks.
+Hope this summary nails it for your developer! Let me know if you'd like any tweaks.
