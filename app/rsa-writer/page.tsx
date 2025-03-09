@@ -1,3 +1,4 @@
+// app/rsa-writer/page.tsx
 "use server"
 
 import { auth } from "@clerk/nextjs/server"
@@ -5,8 +6,6 @@ import { redirect } from "next/navigation"
 import { getProfileByUserIdAction } from "@/actions/db/profiles-actions"
 import { getProjectsByUserIdAction } from "@/actions/db/projects-actions"
 import { UrlInputForm } from "@/components/rsa-writer/url-input-form"
-import { GenerateCopyButton } from "@/components/rsa-writer/generate-copy-button"
-import { CopyDisplay } from "@/components/rsa-writer/copy-display"
 
 export default async function DashboardPage() {
   const { userId } = await auth()
@@ -31,16 +30,6 @@ export default async function DashboardPage() {
       </div>
       <div className="mb-8 w-full max-w-2xl">
         <UrlInputForm />
-      </div>
-      <div className="w-full max-w-4xl">
-        {projects.map(project => (
-          <div key={project.id} className="mb-8">
-            <h2 className="text-xl font-semibold">Project: {project.id}</h2>
-            <p>Status: {project.status}</p>
-            <GenerateCopyButton projectId={project.id} />
-            <CopyDisplay project={project} />
-          </div>
-        ))}
       </div>
     </div>
   )

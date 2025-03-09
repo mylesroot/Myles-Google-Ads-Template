@@ -14,6 +14,13 @@ import {
 } from "@/db/schema/projects-schema"
 import { ActionState } from "@/types"
 import { eq } from "drizzle-orm"
+import { auth } from "@clerk/nextjs/server"
+
+// Type for generated_copy structure (assuming one version per URL for simplicity)
+type GeneratedCopy = Record<
+  string,
+  { headlines: string[]; descriptions: string[] }
+>
 
 export async function createProjectAction(
   data: InsertProject
@@ -89,5 +96,41 @@ export async function deleteProjectAction(
   } catch (error) {
     console.error("Error deleting project:", error)
     return { isSuccess: false, message: "Failed to delete project" }
+  }
+}
+
+export async function updateGeneratedCopyAction(
+  projectId: string,
+  generatedCopy: GeneratedCopy
+): Promise<ActionState<SelectProject>> {
+  try {
+    const { userId } = await auth()
+    if (!userId) {
+      return { isSuccess: false, message: "Unauthorized" }
+    }
+
+    // Verify the project exists and belongs to the user
+    const project = await db.query.projects.findFirst({
+      where: eq(projectsTable.id, projectId)
+    })
+    if (!project || project.userId !== userId) {
+      return { isSuccess: false, message: "Project not found or unauthorized" }
+    }
+
+    // Update only the generatedCopy field
+    const [updatedProject] = await db
+      .update(projectsTable)
+      .set({ generatedCopy, updatedAt: new Date() })
+      .where(eq(projectsTable.id, projectId))
+      .returning()
+
+    return {
+      isSuccess: true,
+      message: "Generated copy updated successfully",
+      data: updatedProject
+    }
+  } catch (error) {
+    console.error("Error updating generated copy:", error)
+    return { isSuccess: false, message: "Failed to update generated copy" }
   }
 }
