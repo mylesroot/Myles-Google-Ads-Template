@@ -47,7 +47,7 @@ const plans: PlanTier[] = [
     buttonText: "Upgrade",
     features: [
       { text: "50 credits/month" },
-      { text: "Basic features" },
+      { text: "Generate Ads From URLs" },
       { text: "No rollover of unused credits" },
       { text: "Email support" }
     ]
@@ -63,10 +63,9 @@ const plans: PlanTier[] = [
     highlighted: true,
     features: [
       { text: "250 credits/month" },
-      { text: "All features" },
+      { text: "Publish Ads Via Google Ads API" },
       { text: "Rollover up to 100 unused credits" },
-      { text: "Priority email support" },
-      { text: "Analytics dashboard" }
+      { text: "Priority email support" }
     ]
   },
   {

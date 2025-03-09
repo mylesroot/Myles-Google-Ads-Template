@@ -10,6 +10,7 @@ import { PlanDialog } from "@/components/pricing/plan-dialog"
 // Plan definitions from plan-dialog.tsx
 interface PlanFeature {
   text: string
+  highlighted?: boolean
 }
 
 interface PlanTier {
@@ -43,7 +44,7 @@ const plans: PlanTier[] = [
     buttonText: "Subscribe",
     features: [
       { text: "50 credits/month" },
-      { text: "Basic features" },
+      { text: "Generate Ads From URLs" },
       { text: "No rollover of unused credits" },
       { text: "Email support" }
     ]
@@ -59,7 +60,7 @@ const plans: PlanTier[] = [
     highlighted: true,
     features: [
       { text: "250 credits/month" },
-      { text: "All features" },
+      { text: "One-Click Bulk Publish Via Google Ads API", highlighted: true },
       { text: "Rollover up to 100 unused credits" },
       { text: "Priority email support" }
     ]
@@ -182,8 +183,25 @@ export function Pricing() {
                 {plan.features.map((feature, index) => (
                   <li key={index} className="flex items-start">
                     <CheckIcon className="mr-3 size-5 shrink-0 text-black" />
-                    <span className="text-muted-foreground text-base">
+                    <span
+                      className={`text-base ${
+                        feature.highlighted
+                          ? "font-semibold text-black"
+                          : "text-muted-foreground"
+                      }`}
+                    >
                       {feature.text}
+                      {feature.highlighted && (
+                        <span
+                          className="ml-2 inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium"
+                          style={{
+                            backgroundColor: "rgba(218, 129, 70, 0.1)",
+                            color: "#DA8146"
+                          }}
+                        >
+                          Speeeedy
+                        </span>
+                      )}
                     </span>
                   </li>
                 ))}
