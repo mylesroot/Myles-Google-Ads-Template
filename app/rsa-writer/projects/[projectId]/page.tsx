@@ -4,14 +4,9 @@ import { Suspense } from "react"
 import { notFound } from "next/navigation"
 import { auth } from "@clerk/nextjs/server"
 import { db } from "@/db/db"
-import { projectsTable } from "@/db/schema/projects-schema"
-import { eq } from "drizzle-orm"
 import { ProjectDetail } from "@/components/rsa-writer/project-detail"
 import { Skeleton } from "@/components/ui/skeleton"
-import {
-  getProjectByIdAction,
-  getProjectsByUserIdAction
-} from "@/actions/db/projects-actions"
+import { getProjectsByUserIdAction } from "@/actions/db/projects-actions"
 
 interface ProjectPageProps {
   params: Promise<{
