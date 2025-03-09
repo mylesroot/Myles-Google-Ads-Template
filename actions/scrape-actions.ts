@@ -73,21 +73,16 @@ export async function scrapeUrlsAction(
     const profile = profileResult.data
     const urlCount = validUrls.length
 
-    // Check if the user has enough credits based on their membership
-    if (profile.membership === "free" && urlCount > 5) {
-      return {
-        isSuccess: false,
-        message: `Free tier is limited to 5 URLs. You provided ${urlCount} valid URLs.`
-      }
-    }
-
-    // Check if basic tier user has enough credits
-    if (profile.membership === "basic") {
+    // Check if free or starter tier user has enough credits
+    if (profile.membership === "free" || profile.membership === "starter") {
       const credits = profile.credits ?? 0
-      if (credits < urlCount) {
+      // Each URL requires 0.5 credits
+      const requiredCredits = urlCount * 0.5
+
+      if (credits < requiredCredits) {
         return {
           isSuccess: false,
-          message: `Insufficient credits. You need ${urlCount} credits but have ${credits}.`
+          message: `Insufficient credits: You need ${requiredCredits} credits for ${urlCount} URLs`
         }
       }
     }
@@ -110,10 +105,13 @@ export async function scrapeUrlsAction(
     // Update the project status to "scraping"
     await updateProjectAction(project.id, { status: "scraping" })
 
-    // Deduct credits for basic tier users
-    if (profile.membership === "basic" && profile.credits !== null) {
+    // Deduct credits for free and starter tier users
+    if (
+      (profile.membership === "free" || profile.membership === "starter") &&
+      profile.credits !== null
+    ) {
       await updateProfileAction(userId, {
-        credits: profile.credits - urlCount
+        credits: profile.credits - urlCount * 0.5
       })
     }
 

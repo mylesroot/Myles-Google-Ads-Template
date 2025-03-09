@@ -56,12 +56,14 @@ export async function generateCopyAction(
     if (profile.membership === "free" && urlCount > 5) {
       return { isSuccess: false, message: "Free tier limited to 5 URLs" }
     }
-    if (profile.membership === "basic") {
+    if (profile.membership === "free" || profile.membership === "starter") {
       const credits = profile.credits ?? 0
-      if (credits < urlCount) {
+      const requiredCredits = urlCount * 0.5
+
+      if (credits < requiredCredits) {
         return {
           isSuccess: false,
-          message: `Insufficient credits: ${credits} available, ${urlCount} needed`
+          message: `Insufficient credits: You need ${requiredCredits} credits for ${urlCount} URLs`
         }
       }
     }
@@ -94,8 +96,13 @@ export async function generateCopyAction(
 
     await updateProjectAction(projectId, { generatedCopy, status: "completed" })
 
-    if (profile.membership === "basic" && profile.credits !== null) {
-      await updateProfileAction(userId, { credits: profile.credits - urlCount })
+    if (
+      (profile.membership === "free" || profile.membership === "starter") &&
+      profile.credits !== null
+    ) {
+      await updateProfileAction(userId, {
+        credits: profile.credits - urlCount * 0.5
+      })
     }
 
     revalidatePath("/rsa-writer")
@@ -142,13 +149,12 @@ export async function generateSingleCopyAction(
       return { isSuccess: false, message: "URL not found in scraped data" }
     }
 
-    // Check credits for basic tier
-    if (profile.membership === "basic") {
+    if (profile.membership === "free" || profile.membership === "starter") {
       const credits = profile.credits ?? 0
-      if (credits < 1) {
+      if (credits < 0.5) {
         return {
           isSuccess: false,
-          message: "Insufficient credits: You need at least 1 credit"
+          message: "Insufficient credits: You need at least 0.5 credits"
         }
       }
     }
@@ -158,13 +164,11 @@ export async function generateSingleCopyAction(
       return { isSuccess: false, message: "Invalid data for the URL" }
     }
 
-    // Generate copy for the single URL
     const copy = await openAIService.generateAdCopy({
       scrapedData: urlData,
       url
     })
 
-    // Update the project's generated copy
     const generatedCopy = {
       ...((project.generatedCopy as Record<string, any>) || {}),
       [url]: copy
@@ -172,9 +176,11 @@ export async function generateSingleCopyAction(
 
     await updateProjectAction(projectId, { generatedCopy })
 
-    // Deduct credit if on basic tier
-    if (profile.membership === "basic" && profile.credits !== null) {
-      await updateProfileAction(userId, { credits: profile.credits - 1 })
+    if (
+      (profile.membership === "free" || profile.membership === "starter") &&
+      profile.credits !== null
+    ) {
+      await updateProfileAction(userId, { credits: profile.credits - 0.5 })
     }
 
     revalidatePath("/rsa-writer")

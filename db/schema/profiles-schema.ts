@@ -4,14 +4,19 @@ Defines the database schema for profiles.
 </ai_context>
 */
 
-import { pgEnum, pgTable, text, timestamp, integer } from "drizzle-orm/pg-core"
+import { pgEnum, pgTable, text, timestamp, decimal } from "drizzle-orm/pg-core"
 
-export const membershipEnum = pgEnum("membership", ["free", "basic", "pro"])
+export const membershipEnum = pgEnum("membership", [
+  "free",
+  "starter",
+  "pro",
+  "agency"
+])
 
 export const profilesTable = pgTable("profiles", {
   userId: text("user_id").primaryKey().notNull(),
   membership: membershipEnum("membership").notNull().default("free"),
-  credits: integer("credits").default(100),
+  credits: decimal("credits", { precision: 10, scale: 1 }).default("5"),
   stripeCustomerId: text("stripe_customer_id"),
   stripeSubscriptionId: text("stripe_subscription_id"),
   createdAt: timestamp("created_at").defaultNow().notNull(),

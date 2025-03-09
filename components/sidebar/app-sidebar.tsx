@@ -6,7 +6,7 @@ This client component provides the sidebar for the app.
 
 "use client"
 
-import { BookmarkIcon, PenLine } from "lucide-react"
+import { BookmarkIcon, PenLine, CreditCard } from "lucide-react"
 import Image from "next/image"
 import * as React from "react"
 
