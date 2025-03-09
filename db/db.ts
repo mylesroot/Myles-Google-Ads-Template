@@ -4,7 +4,7 @@ Initializes the database connection and schema for the app.
 </ai_context>
 */
 
-import { profilesTable } from "@/db/schema"
+import { profilesTable, projectsTable } from "@/db/schema"
 import { config } from "dotenv"
 import { drizzle } from "drizzle-orm/postgres-js"
 import postgres from "postgres"
@@ -12,7 +12,8 @@ import postgres from "postgres"
 config({ path: ".env.local" })
 
 const schema = {
-  profiles: profilesTable
+  profiles: profilesTable,
+  projects: projectsTable
 }
 
 const client = postgres(process.env.DATABASE_URL!)
