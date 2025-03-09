@@ -15,7 +15,7 @@ export default function SignUpPage() {
 
   return (
     <SignUp
-      forceRedirectUrl="/dashboard"
+      forceRedirectUrl="/rsa-writer"
       appearance={{ baseTheme: theme === "dark" ? dark : undefined }}
     />
   )

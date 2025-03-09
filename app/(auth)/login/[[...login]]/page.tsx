@@ -15,7 +15,7 @@ export default function LoginPage() {
 
   return (
     <SignIn
-      forceRedirectUrl="/dashboard"
+      forceRedirectUrl="/rsa-writer"
       appearance={{ baseTheme: theme === "dark" ? dark : undefined }}
     />
   )

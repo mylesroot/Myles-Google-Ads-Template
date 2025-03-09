@@ -16,7 +16,9 @@ export function NavUser() {
     <SidebarMenu>
       <SidebarMenuItem className="flex items-center gap-2 font-medium">
         <UserButton afterSignOutUrl="/" />
-        {user?.fullName}
+        <span className="group-data-[collapsible=icon]:hidden">
+          {user?.fullName}
+        </span>
       </SidebarMenuItem>
     </SidebarMenu>
   )

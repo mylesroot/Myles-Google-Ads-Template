@@ -4,8 +4,6 @@ Firecrawl service for scraping URLs.
 </ai_context>
 */
 
-"use server"
-
 import FirecrawlApp from "@mendable/firecrawl-js"
 import { env } from "@/lib/env"
 import createLogger from "@/lib/logger"
