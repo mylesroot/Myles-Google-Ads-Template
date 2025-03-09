@@ -21,14 +21,7 @@ import {
 } from "@/components/ui/dropdown-menu"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
-import {
-  MoreHorizontal,
-  Eye,
-  Edit,
-  Trash2,
-  Download,
-  FileText
-} from "lucide-react"
+import { MoreHorizontal, Eye, Trash2, Download, FileText } from "lucide-react"
 import { SelectProject } from "@/db/schema/projects-schema"
 import { deleteProjectAction } from "@/actions/db/projects-actions"
 import { toast } from "@/components/ui/use-toast"
@@ -43,10 +36,6 @@ export function ProjectsOverview({ projects }: ProjectsOverviewProps) {
 
   const handleViewProject = (projectId: string) => {
     router.push(`/rsa-writer/projects/${projectId}`)
-  }
-
-  const handleEditProject = (projectId: string) => {
-    router.push(`/rsa-writer/projects/${projectId}/edit`)
   }
 
   const handleDeleteProject = async (projectId: string) => {
@@ -133,7 +122,11 @@ export function ProjectsOverview({ projects }: ProjectsOverviewProps) {
           </TableHeader>
           <TableBody>
             {projects.map(project => (
-              <TableRow key={project.id}>
+              <TableRow
+                key={project.id}
+                className="cursor-pointer"
+                onClick={() => handleViewProject(project.id)}
+              >
                 <TableCell className="font-medium">{project.name}</TableCell>
                 <TableCell>
                   {getStatusBadge(project.status || "pending")}
@@ -146,13 +139,19 @@ export function ProjectsOverview({ projects }: ProjectsOverviewProps) {
                 </TableCell>
                 <TableCell className="text-right">
                   <DropdownMenu>
-                    <DropdownMenuTrigger asChild>
+                    <DropdownMenuTrigger
+                      asChild
+                      onClick={e => e.stopPropagation()}
+                    >
                       <Button variant="ghost" size="icon">
                         <MoreHorizontal className="size-4" />
                         <span className="sr-only">Open menu</span>
                       </Button>
                     </DropdownMenuTrigger>
-                    <DropdownMenuContent align="end">
+                    <DropdownMenuContent
+                      align="end"
+                      onClick={e => e.stopPropagation()}
+                    >
                       <DropdownMenuLabel>Actions</DropdownMenuLabel>
                       <DropdownMenuItem
                         onClick={() => handleViewProject(project.id)}
@@ -161,13 +160,7 @@ export function ProjectsOverview({ projects }: ProjectsOverviewProps) {
                         View
                       </DropdownMenuItem>
                       <DropdownMenuItem
-                        onClick={() => handleEditProject(project.id)}
-                      >
-                        <Edit className="mr-2 size-4" />
-                        Edit
-                      </DropdownMenuItem>
-                      <DropdownMenuItem
-                        disabled={project.status === "completed"}
+                        disabled={project.status !== "completed"}
                       >
                         <Download className="mr-2 size-4" />
                         Export
