@@ -14,18 +14,19 @@ import {
   SignUpButton,
   UserButton
 } from "@clerk/nextjs"
-import { Menu, Rocket, X } from "lucide-react"
+import { Menu, X } from "lucide-react"
 import Link from "next/link"
+import Image from "next/image"
 import { useEffect, useState } from "react"
-import { ThemeSwitcher } from "./utilities/theme-switcher"
 
+// Navigation links that will scroll to sections
 const navLinks = [
-  { href: "/about", label: "About" },
-  { href: "/pricing", label: "Pricing" },
-  { href: "/contact", label: "Contact" }
+  { href: "#pricing", label: "Pricing" },
+  { href: "#faq", label: "FAQ" }
 ]
 
-const signedInLinks = [{ href: "/todo", label: "Todo" }]
+// Links only visible when signed in
+const signedInLinks = [{ href: "/rsa-writer", label: "Dashboard" }]
 
 export default function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
@@ -44,6 +45,19 @@ export default function Header() {
     return () => window.removeEventListener("scroll", handleScroll)
   }, [])
 
+  // Handle smooth scrolling to sections
+  const scrollToSection = (
+    e: React.MouseEvent<HTMLAnchorElement>,
+    id: string
+  ) => {
+    e.preventDefault()
+    const element = document.getElementById(id.substring(1)) // Remove the # from the ID
+    if (element) {
+      element.scrollIntoView({ behavior: "smooth" })
+      if (isMenuOpen) toggleMenu() // Close mobile menu if open
+    }
+  }
+
   return (
     <header
       className={`sticky top-0 z-50 transition-colors ${
@@ -54,21 +68,28 @@ export default function Header() {
     >
       <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-4 lg:px-8">
         <div className="flex items-center space-x-2 hover:cursor-pointer hover:opacity-80">
-          <Rocket className="size-6" />
+          <Image
+            src="/logo.png"
+            alt="Ad Conversions Logo"
+            width={30}
+            height={30}
+            className="size-8"
+          />
           <Link href="/" className="text-xl font-bold">
-            Myles' Google Ads SaaS Template
+            Ad Conversions
           </Link>
         </div>
 
-        <nav className="absolute left-1/2 hidden -translate-x-1/2 space-x-1 font-medium md:flex">
+        <nav className="absolute left-1/2 hidden -translate-x-1/2 space-x-6 font-medium md:flex">
           {navLinks.map(link => (
-            <Link
+            <a
               key={link.href}
               href={link.href}
-              className="text-muted-foreground hover:text-foreground rounded-md px-3 py-2 text-sm"
+              onClick={e => scrollToSection(e, link.href)}
+              className="text-muted-foreground hover:text-foreground rounded-md px-3 py-2 text-sm font-medium"
             >
               {link.label}
-            </Link>
+            </a>
           ))}
 
           <SignedIn>
@@ -76,7 +97,7 @@ export default function Header() {
               <Link
                 key={link.href}
                 href={link.href}
-                className="text-muted-foreground hover:text-foreground rounded-md px-3 py-2 text-sm"
+                className="text-muted-foreground hover:text-foreground rounded-md px-3 py-2 text-sm font-medium"
               >
                 {link.label}
               </Link>
@@ -85,8 +106,6 @@ export default function Header() {
         </nav>
 
         <div className="flex items-center space-x-4">
-          <ThemeSwitcher />
-
           <SignedOut>
             <div className="hidden sm:block">
               <SignInButton>
@@ -145,13 +164,13 @@ export default function Header() {
             </li>
             {navLinks.map(link => (
               <li key={link.href}>
-                <Link
+                <a
                   href={link.href}
                   className="text-muted-foreground hover:text-foreground block text-sm font-medium"
-                  onClick={toggleMenu}
+                  onClick={e => scrollToSection(e, link.href)}
                 >
                   {link.label}
-                </Link>
+                </a>
               </li>
             ))}
             <SignedIn>
@@ -178,6 +197,16 @@ export default function Header() {
                     Login
                   </Button>
                 </SignInButton>
+              </li>
+              <li className="pt-2">
+                <SignUpButton>
+                  <Button
+                    size="sm"
+                    className="w-full bg-black text-sm font-medium text-white hover:bg-gray-800"
+                  >
+                    Sign Up
+                  </Button>
+                </SignUpButton>
               </li>
             </SignedOut>
           </ul>

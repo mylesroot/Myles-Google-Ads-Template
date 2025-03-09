@@ -1,142 +1,211 @@
 "use client"
 
 import { Button } from "@/components/ui/button"
-import { ArrowRight } from "lucide-react"
+import { ArrowRight, CheckIcon } from "lucide-react"
 import Link from "next/link"
 import posthog from "posthog-js"
+import { useState } from "react"
+import { PlanDialog } from "@/components/pricing/plan-dialog"
+
+// Plan definitions from plan-dialog.tsx
+interface PlanFeature {
+  text: string
+}
+
+interface PlanTier {
+  name: string
+  description: string
+  price: string
+  period: string
+  features: PlanFeature[]
+  highlighted?: boolean
+  credits: number
+  buttonText: string
+  planId: string
+}
+
+// Define prices for each plan (taken from plan-dialog.tsx)
+const STRIPE_PRICES = {
+  starter: process.env.NEXT_PUBLIC_STRIPE_STARTER_PRICE_ID,
+  pro: process.env.NEXT_PUBLIC_STRIPE_PRO_PRICE_ID,
+  agency: process.env.NEXT_PUBLIC_STRIPE_AGENCY_PRICE_ID
+}
+
+// Plans from plan-dialog.tsx for consistency
+const plans: PlanTier[] = [
+  {
+    name: "Starter",
+    description: "For small businesses",
+    price: "$5",
+    period: "per month",
+    credits: 50,
+    planId: "starter",
+    buttonText: "Subscribe",
+    features: [
+      { text: "50 credits/month" },
+      { text: "Basic features" },
+      { text: "No rollover of unused credits" },
+      { text: "Email support" }
+    ]
+  },
+  {
+    name: "Pro",
+    description: "For larger businesses or small agencies",
+    price: "$19",
+    period: "per month",
+    credits: 250,
+    planId: "pro",
+    buttonText: "Subscribe",
+    highlighted: true,
+    features: [
+      { text: "250 credits/month" },
+      { text: "All features" },
+      { text: "Rollover up to 100 unused credits" },
+      { text: "Priority email support" }
+    ]
+  },
+  {
+    name: "Agency",
+    description: "For large teams and businesses",
+    price: "$25",
+    period: "per month",
+    credits: 500,
+    planId: "agency",
+    buttonText: "Subscribe",
+    features: [
+      { text: "500 credits/month" },
+      { text: "All features + API access" },
+      { text: "Rollover up to 300 unused credits" },
+      { text: "Priority support with 24-hour response time" }
+    ]
+  }
+]
 
 export function Pricing() {
-  const handlePricingClick = () => {
-    posthog.capture("clicked_buy_pricing")
+  const [isPlanDialogOpen, setIsPlanDialogOpen] = useState(false)
+
+  const handlePricingClick = (planId?: string) => {
+    // Track the click event
+    posthog.capture("clicked_buy_pricing", { plan: planId || "free" })
+    // Open the pricing dialog
+    setIsPlanDialogOpen(true)
   }
 
   return (
-    <div className="mx-auto mt-32 max-w-2xl">
+    <div id="pricing" className="mx-auto mt-32 max-w-6xl">
       <div className="text-center">
         <div className="inline-flex rounded-full bg-gray-100 px-3 py-1 text-sm font-medium">
-          Get Started
+          Transparent
         </div>
         <h2 className="mt-6 text-4xl font-medium tracking-tight">
-          Ready to build your Google Ads app?
+          Flexible Pricing
         </h2>
         <p className="text-muted-foreground text-l mt-4">
-          Everything you need to launch your next Google Ads project
+          Start For For Free, Then Scale As Needed
         </p>
       </div>
 
-      <div className="mt-10">
-        <div className="relative mx-auto max-w-md rounded-2xl border p-6">
-          <div className="absolute -top-3 left-1/2 -translate-x-1/2">
-            <div className="inline-flex rounded-full bg-black px-4 py-1 text-sm font-medium text-white">
-              FREE
-            </div>
-          </div>
+      <div className="mt-10 grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4">
+        {/* Free Plan */}
+        <div className="relative rounded-2xl border p-6">
+          <div className="absolute -top-3 left-1/2 -translate-x-1/2"></div>
 
           <div className="text-center">
-            <h3 className="text-2xl font-medium">Open Source Template</h3>
+            <h3 className="text-2xl font-medium">Try it out</h3>
             <p className="text-muted-foreground mt-2 text-sm">
-              Start building right away
+              Create 5 ads for free to see if you like it
             </p>
 
             <div className="mt-8 flex items-baseline justify-center">
               <span className="text-6xl font-bold">$0</span>
-              <span className="text-muted-foreground ml-2">forever</span>
             </div>
 
             <Button
               size="lg"
               className="mt-8 w-full"
-              onClick={handlePricingClick}
+              onClick={() => handlePricingClick()}
               asChild
             >
-              <Link href="https://github.com/mylesroot/Myles-Google-Ads-Template">
-                Clone Repository <ArrowRight className="ml-2 size-4" />
+              <Link href="/signup">
+                Try it out free <ArrowRight className="ml-2 size-4" />
               </Link>
             </Button>
 
             <ul className="mt-10 space-y-4 text-left">
               <li className="flex items-start">
-                <svg
-                  className="mr-3 size-5 shrink-0 text-black"
-                  viewBox="0 0 20 20"
-                  fill="currentColor"
-                >
-                  <path
-                    fillRule="evenodd"
-                    d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
-                    clipRule="evenodd"
-                  />
-                </svg>
+                <CheckIcon className="mr-3 size-5 shrink-0 text-black" />
                 <span className="text-muted-foreground text-base">
-                  Complete Next.js Google Ads application template
-                </span>
-              </li>
-              <li className="flex items-start">
-                <svg
-                  className="mr-3 size-5 shrink-0 text-black"
-                  viewBox="0 0 20 20"
-                  fill="currentColor"
-                >
-                  <path
-                    fillRule="evenodd"
-                    d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
-                    clipRule="evenodd"
-                  />
-                </svg>
-                <span className="text-muted-foreground text-base">
-                  Frontend, backend, auth, payments, and analytics
-                </span>
-              </li>
-              <li className="flex items-start">
-                <svg
-                  className="mr-3 size-5 shrink-0 text-black"
-                  viewBox="0 0 20 20"
-                  fill="currentColor"
-                >
-                  <path
-                    fillRule="evenodd"
-                    d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
-                    clipRule="evenodd"
-                  />
-                </svg>
-                <span className="text-muted-foreground text-base">
-                  Ready for AI integration with Cursor, V0, and Perplexity
-                </span>
-              </li>
-              <li className="flex items-start">
-                <svg
-                  className="mr-3 size-5 shrink-0 text-black"
-                  viewBox="0 0 20 20"
-                  fill="currentColor"
-                >
-                  <path
-                    fillRule="evenodd"
-                    d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
-                    clipRule="evenodd"
-                  />
-                </svg>
-                <span className="text-muted-foreground text-base">
-                  Community support
+                  Create 5 ads for free
                 </span>
               </li>
             </ul>
           </div>
         </div>
 
-        <div className="text-muted-foreground mt-8 flex items-center justify-center gap-2 text-sm">
-          <svg
-            className="size-4"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2"
+        {/* Paid Plans */}
+        {plans.map(plan => (
+          <div
+            key={plan.planId}
+            className={`relative rounded-2xl border p-6 ${plan.highlighted ? "border-primary ring-primary ring-1" : ""}`}
           >
-            <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
-            <path d="M7 11V7a5 5 0 0110 0v4"></path>
-          </svg>
-          Set up your own accounts for Supabase, Clerk, Stripe, and PostHog
-        </div>
+            {plan.highlighted && (
+              <div className="absolute -top-3 left-1/2 -translate-x-1/2">
+                <div className="bg-primary text-primary-foreground inline-flex rounded-full px-3 py-1 text-xs font-medium">
+                  Best Value
+                </div>
+              </div>
+            )}
+
+            <div className="text-center">
+              <h3 className="text-2xl font-medium">{plan.name}</h3>
+              <p className="text-muted-foreground mt-2 text-sm">
+                {plan.description}
+              </p>
+
+              <div className="mt-8 flex items-baseline justify-center">
+                <span className="text-6xl font-bold">{plan.price}</span>
+                <span className="text-muted-foreground ml-2">
+                  {plan.period}
+                </span>
+              </div>
+
+              <Button
+                size="lg"
+                className="mt-8 w-full"
+                onClick={() => handlePricingClick(plan.planId)}
+                variant={plan.highlighted ? "default" : "outline"}
+              >
+                {plan.buttonText} <ArrowRight className="ml-2 size-4" />
+              </Button>
+
+              <ul className="mt-10 space-y-4 text-left">
+                {plan.features.map((feature, index) => (
+                  <li key={index} className="flex items-start">
+                    <CheckIcon className="mr-3 size-5 shrink-0 text-black" />
+                    <span className="text-muted-foreground text-base">
+                      {feature.text}
+                    </span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </div>
+        ))}
       </div>
+
+      <div className="mt-10">
+        <h2 className="text-muted-foreground text-sm">
+          *1 credit = 1 scrape and 1 ad generation. It costs 0.5 credits to
+          scrape a URL, and 0.5 to create an ad for that URL.
+        </h2>
+      </div>
+
+      {/* Plan Dialog */}
+      <PlanDialog
+        isOpen={isPlanDialogOpen}
+        onClose={() => setIsPlanDialogOpen(false)}
+        currentPlan="free" // Default to free plan for visitors
+      />
     </div>
   )
 }

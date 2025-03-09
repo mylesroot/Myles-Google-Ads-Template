@@ -23,9 +23,9 @@ import "./globals.css"
 const inter = Inter({ subsets: ["latin"] })
 
 export const metadata: Metadata = {
-  title: "Myles' Google Ads SaaS Template",
+  title: "Ad Conversions",
   description:
-    "A full-stack web app template for building your own Google Ads SaaS."
+    "A swiss-army toolbox for Google Ads. Build, test, and optimize your ads with ease."
 }
 
 export default async function RootLayout({

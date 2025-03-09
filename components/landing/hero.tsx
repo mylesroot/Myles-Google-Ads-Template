@@ -31,20 +31,24 @@ export function Hero() {
         <div className="mx-auto max-w-7xl px-6 lg:px-8">
           <div className="mx-auto max-w-4xl text-center">
             <h1 className="text-4xl font-medium tracking-tight sm:text-6xl">
-              Google Ads SaaS Template with{" "}
+              Create{" "}
               <span className="inline-block bg-gradient-to-r from-gray-600 to-gray-900 bg-clip-text text-transparent">
-                Modern Tech Stack
+                Expert
+              </span>{" "}
+              Google Search Ads{" "}
+              <span className="inline-block bg-gradient-to-r from-gray-600 to-gray-900 bg-clip-text text-transparent">
+                In 2 Clicks
               </span>
             </h1>
             <p className="text-muted-foreground mt-6 text-lg leading-8">
-              Build powerful Google Ads applications with Next.js, Tailwind,
-              Shadcn, Framer Motion, PostgreSQL, Supabase, Drizzle ORM, Clerk,
-              Stripe, and PostHog.
+              Paste in multiple website URLs, we'll retrieve the information and
+              generate copy with{" "}
+              <strong>AI trained for Google Search Ads</strong>.
             </p>
             <div className="mt-10 flex items-center justify-center">
               <Button size="lg" onClick={handleHeroClick} asChild>
-                <Link href="https://github.com/mylesroot/Myles-Google-Ads-Template">
-                  Get Started Today
+                <Link href="/signup">
+                  Start Saving Time & Impressing Your Boss
                 </Link>
               </Button>
             </div>
