@@ -8,8 +8,11 @@ import {
   DialogTitle
 } from "@/components/ui/dialog"
 import { Button } from "@/components/ui/button"
-import { CheckIcon, ArrowRight } from "lucide-react"
+import { CheckIcon, ArrowRight, Loader2 } from "lucide-react"
 import { cn } from "@/lib/utils"
+import { useState } from "react"
+import { useRouter } from "next/navigation"
+import { useToast } from "@/components/ui/use-toast"
 
 interface PlanFeature {
   text: string
@@ -25,6 +28,15 @@ interface PlanTier {
   credits: number
   buttonText: string
   planId: string
+}
+
+// Define prices for each plan and credit pack
+const STRIPE_PRICES = {
+  starter: process.env.NEXT_PUBLIC_STRIPE_STARTER_PRICE_ID,
+  pro: process.env.NEXT_PUBLIC_STRIPE_PRO_PRICE_ID,
+  agency: process.env.NEXT_PUBLIC_STRIPE_AGENCY_PRICE_ID,
+  credits_small: process.env.NEXT_PUBLIC_STRIPE_CREDITS_SMALL_PRICE_ID,
+  credits_large: process.env.NEXT_PUBLIC_STRIPE_CREDITS_LARGE_PRICE_ID
 }
 
 const plans: PlanTier[] = [
@@ -101,11 +113,101 @@ interface PlanDialogProps {
 }
 
 export function PlanDialog({ isOpen, onClose, currentPlan }: PlanDialogProps) {
-  const handleUpgrade = (planId: string) => {
-    // Here you would integrate with your payment system
-    console.log(`Upgrading to ${planId}`)
-    // For now, we'll just close the dialog
-    onClose()
+  const [loading, setLoading] = useState<string | null>(null)
+  const router = useRouter()
+  const { toast } = useToast()
+
+  const handleUpgrade = async (planId: string) => {
+    // Skip if it's the current plan or free plan
+    if (planId === currentPlan || planId === "free") {
+      return
+    }
+
+    setLoading(planId)
+
+    try {
+      const priceId = STRIPE_PRICES[planId as keyof typeof STRIPE_PRICES]
+
+      if (!priceId) {
+        throw new Error(`No price ID found for plan: ${planId}`)
+      }
+
+      const response = await fetch("/api/stripe/create-checkout", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          priceId,
+          mode: "subscription",
+          successUrl: window.location.origin + "/dashboard?checkout=success",
+          cancelUrl: window.location.origin + "/dashboard?checkout=canceled"
+        })
+      })
+
+      if (!response.ok) {
+        throw new Error("Failed to create checkout session")
+      }
+
+      const data = await response.json()
+
+      // Redirect to Stripe Checkout
+      router.push(data.url)
+    } catch (error) {
+      console.error("Error creating checkout session:", error)
+      toast({
+        title: "Error",
+        description: "Failed to create checkout session. Please try again.",
+        variant: "destructive"
+      })
+    } finally {
+      setLoading(null)
+    }
+  }
+
+  const handleBuyCredits = async (
+    packageId: "credits_small" | "credits_large"
+  ) => {
+    setLoading(packageId)
+
+    try {
+      const priceId = STRIPE_PRICES[packageId]
+
+      if (!priceId) {
+        throw new Error(`No price ID found for credits package: ${packageId}`)
+      }
+
+      const response = await fetch("/api/stripe/create-checkout", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          priceId,
+          mode: "payment", // One-time payment
+          successUrl: window.location.origin + "/dashboard?checkout=success",
+          cancelUrl: window.location.origin + "/dashboard?checkout=canceled"
+        })
+      })
+
+      if (!response.ok) {
+        throw new Error("Failed to create checkout session")
+      }
+
+      const data = await response.json()
+
+      // Redirect to Stripe Checkout
+      router.push(data.url)
+    } catch (error) {
+      console.error("Error creating checkout session:", error)
+      toast({
+        title: "Error",
+        description: "Failed to create checkout session. Please try again.",
+        variant: "destructive"
+      })
+    } finally {
+      setLoading(null)
+    }
   }
 
   return (
@@ -178,7 +280,7 @@ export function PlanDialog({ isOpen, onClose, currentPlan }: PlanDialogProps) {
                       : ""
                   )}
                   onClick={() => handleUpgrade(plan.planId)}
-                  disabled={currentPlan === plan.planId}
+                  disabled={currentPlan === plan.planId || loading !== null}
                   variant={
                     plan.highlighted
                       ? "default"
@@ -187,11 +289,18 @@ export function PlanDialog({ isOpen, onClose, currentPlan }: PlanDialogProps) {
                         : "outline"
                   }
                 >
-                  {currentPlan === plan.planId
-                    ? "Current Plan"
-                    : plan.buttonText}
-                  {currentPlan !== plan.planId && (
-                    <ArrowRight className="ml-2 size-4" />
+                  {loading === plan.planId ? (
+                    <>
+                      <Loader2 className="mr-2 size-4 animate-spin" />
+                      Processing...
+                    </>
+                  ) : currentPlan === plan.planId ? (
+                    "Current Plan"
+                  ) : (
+                    <>
+                      {plan.buttonText}
+                      <ArrowRight className="ml-2 size-4" />
+                    </>
                   )}
                 </Button>
               </div>
@@ -210,8 +319,17 @@ export function PlanDialog({ isOpen, onClose, currentPlan }: PlanDialogProps) {
                     $2.99 (≈ $0.15 per credit)
                   </p>
                 </div>
-                <Button variant="outline" size="sm">
-                  Buy Credits
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => handleBuyCredits("credits_small")}
+                  disabled={loading !== null || currentPlan === "free"}
+                >
+                  {loading === "credits_small" ? (
+                    <Loader2 className="size-4 animate-spin" />
+                  ) : (
+                    "Buy Credits"
+                  )}
                 </Button>
               </div>
             </div>
@@ -223,12 +341,26 @@ export function PlanDialog({ isOpen, onClose, currentPlan }: PlanDialogProps) {
                     $12.99 (≈ $0.13 per credit)
                   </p>
                 </div>
-                <Button variant="outline" size="sm">
-                  Buy Credits
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => handleBuyCredits("credits_large")}
+                  disabled={loading !== null || currentPlan === "free"}
+                >
+                  {loading === "credits_large" ? (
+                    <Loader2 className="size-4 animate-spin" />
+                  ) : (
+                    "Buy Credits"
+                  )}
                 </Button>
               </div>
             </div>
           </div>
+          {currentPlan === "free" && (
+            <p className="text-muted-foreground mt-2 text-xs">
+              * Credit top-ups are only available for paid plans
+            </p>
+          )}
         </div>
       </DialogContent>
     </Dialog>

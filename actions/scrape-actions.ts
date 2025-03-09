@@ -79,7 +79,7 @@ export async function scrapeUrlsAction(
       // Each URL requires 0.5 credits
       const requiredCredits = urlCount * 0.5
 
-      if (credits < requiredCredits) {
+      if (Number(credits) < requiredCredits) {
         return {
           isSuccess: false,
           message: `Insufficient credits: You need ${requiredCredits} credits for ${urlCount} URLs`
@@ -111,7 +111,7 @@ export async function scrapeUrlsAction(
       profile.credits !== null
     ) {
       await updateProfileAction(userId, {
-        credits: profile.credits - urlCount * 0.5
+        credits: String(Number(profile.credits) - urlCount * 0.5)
       })
     }
 
