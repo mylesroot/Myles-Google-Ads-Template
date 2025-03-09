@@ -93,7 +93,7 @@ export function ProjectsOverview({ projects }: ProjectsOverviewProps) {
     <div className="space-y-4">
       <div className="flex items-center justify-between">
         <h2 className="text-2xl font-bold">Your Projects</h2>
-        <Button onClick={() => router.push("/rsa-writer/new")}>
+        <Button onClick={() => router.push("/rsa-writer")}>
           Create New Project
         </Button>
       </div>
@@ -105,7 +105,7 @@ export function ProjectsOverview({ projects }: ProjectsOverviewProps) {
           <p className="text-muted-foreground mb-4">
             Create your first project to get started with RSA generation.
           </p>
-          <Button onClick={() => router.push("/rsa-writer/new")}>
+          <Button onClick={() => router.push("/rsa-writer")}>
             Create New Project
           </Button>
         </div>

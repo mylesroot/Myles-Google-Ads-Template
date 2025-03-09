@@ -1,6 +1,7 @@
 "use client"
 
 import { useState } from "react"
+import { useRouter } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { Textarea } from "@/components/ui/textarea"
 import { Input } from "@/components/ui/input"
@@ -22,6 +23,7 @@ interface UrlInputFormProps {
 }
 
 export function UrlInputForm({ onSuccess, onError }: UrlInputFormProps) {
+  const router = useRouter()
   const [projectName, setProjectName] = useState("")
   const [urlInput, setUrlInput] = useState("")
   const [isSubmitting, setIsSubmitting] = useState(false)
@@ -71,6 +73,9 @@ export function UrlInputForm({ onSuccess, onError }: UrlInputFormProps) {
       if (onSuccess) {
         onSuccess(result.data.projectId, result.data.invalidUrls)
       }
+
+      // Redirect to the project page
+      router.push(`/rsa-writer/projects/${result.data.projectId}`)
     } catch (error) {
       toast({
         variant: "destructive",

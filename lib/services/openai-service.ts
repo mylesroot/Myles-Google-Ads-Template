@@ -37,9 +37,26 @@ export class OpenAIService {
     try {
       logger.info(`Generating ad copy for URL: ${url}`)
 
+      // Extract relevant data from the scraped data structure
+      // The actual structure is { success: boolean, markdown: string, metadata: {...} }
+      let markdownContent = scrapedData.markdown || ""
+      let metadata = scrapedData.metadata || {}
+
+      // Ensure we have data to work with
+      if (!markdownContent && !metadata) {
+        logger.warn(`No usable content found for URL: ${url}`)
+        // Return empty arrays if no data is available
+        return { headlines: [], descriptions: [] }
+      }
+
       const prompt = `
         Given the following scraped data from the URL ${url} for an eCommerce product or collection:
-${JSON.stringify(scrapedData, null, 2)}
+
+Markdown Content:
+${markdownContent}
+
+Metadata:
+${JSON.stringify(metadata, null, 2)}
 
 Generate 15 Google Ads headlines (max 30 characters each) and 4 descriptions (max 90 characters each) tailored to this content. Follow these instructions to create compelling, clear ad copy for an eCommerce audience:
 
