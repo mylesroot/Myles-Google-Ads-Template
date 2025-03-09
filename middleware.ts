@@ -24,15 +24,5 @@ export default clerkMiddleware(async (auth, req) => {
 })
 
 export const config = {
-  matcher: [
-    /*
-     * Match all request paths except for the ones starting with:
-     * - api (API routes)
-     * - _next/static (static files)
-     * - _next/image (image optimization files)
-     * - favicon.ico (favicon file)
-     * - public folder files (.png, .jpg, .ico, etc.)
-     */
-    "/((?!api|_next|public|favicon.ico|apple-touch-icon|icon-|favicon-|og-image|manifest.json).*)"
-  ]
+  matcher: ["/((?!.*\\..*|_next).*)", "/", "/(api|trpc)(.*)"]
 }

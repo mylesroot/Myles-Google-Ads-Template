@@ -57,15 +57,7 @@ export const metadata: Metadata = {
     title: "Ad Conversions | RSA Writer & Google Ads Tools",
     description:
       "A swiss-army toolbox for Google Ads. Build, test, and optimize your ads with ease.",
-    siteName: "Ad Conversions",
-    images: [
-      {
-        url: "https://adconversions.net/og-image.jpg",
-        width: 1200,
-        height: 630,
-        alt: "Ad Conversions - Google Ads Tools"
-      }
-    ]
+    siteName: "Ad Conversions"
   },
   robots: {
     index: true,
@@ -104,27 +96,6 @@ export default async function RootLayout({
   return (
     <ClerkProvider>
       <html lang="en" suppressHydrationWarning>
-        <head>
-          <link rel="icon" href="/favicon.ico" sizes="any" />
-          <link
-            rel="icon"
-            type="image/png"
-            sizes="32x32"
-            href="/favicon-32x32.png"
-          />
-          <link
-            rel="icon"
-            type="image/png"
-            sizes="16x16"
-            href="/favicon-16x16.png"
-          />
-          <link
-            rel="apple-touch-icon"
-            sizes="180x180"
-            href="/apple-touch-icon.png"
-          />
-          <link rel="manifest" href="/manifest.json" />
-        </head>
         <body
           className={cn(
             "bg-background mx-auto min-h-screen w-full scroll-smooth antialiased",
