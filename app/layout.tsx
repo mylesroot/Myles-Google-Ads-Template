@@ -16,16 +16,75 @@ import { TailwindIndicator } from "@/components/utilities/tailwind-indicator"
 import { cn } from "@/lib/utils"
 import { ClerkProvider } from "@clerk/nextjs"
 import { auth } from "@clerk/nextjs/server"
-import type { Metadata } from "next"
+import type { Metadata, Viewport } from "next"
 import { Inter } from "next/font/google"
 import "./globals.css"
 
 const inter = Inter({ subsets: ["latin"] })
 
 export const metadata: Metadata = {
-  title: "Ad Conversions",
+  title: {
+    default: "Ad Conversions | RSA Writer & Google Ads Tools",
+    template: "%s | Ad Conversions"
+  },
   description:
-    "A swiss-army toolbox for Google Ads. Build, test, and optimize your ads with ease."
+    "A swiss-army toolbox for Google Ads. Build, test, and optimize your ads with ease.",
+  keywords: [
+    "Google Ads",
+    "RSA Writer",
+    "Google Search Ads",
+    "AI Google Ads",
+    "PPC",
+    "Digital Marketing",
+    "AI Ad Copy"
+  ],
+  authors: [
+    {
+      name: "Serendipity",
+      url: "https://serendipityy.io"
+    }
+  ],
+  creator: "Serendipity",
+  publisher: "Serendipity",
+  metadataBase: new URL("https://adconversions.net"),
+  alternates: {
+    canonical: "/"
+  },
+  openGraph: {
+    type: "website",
+    locale: "en_US",
+    url: "https://adconversions.net",
+    title: "Ad Conversions | RSA Writer & Google Ads Tools",
+    description:
+      "A swiss-army toolbox for Google Ads. Build, test, and optimize your ads with ease.",
+    siteName: "Ad Conversions",
+    images: [
+      {
+        url: "https://adconversions.net/og-image.jpg",
+        width: 1200,
+        height: 630,
+        alt: "Ad Conversions - Google Ads Tools"
+      }
+    ]
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-video-preview": -1,
+      "max-image-preview": "large",
+      "max-snippet": -1
+    }
+  }
+}
+
+export const viewport: Viewport = {
+  themeColor: "#ffffff",
+  width: "device-width",
+  initialScale: 1,
+  maximumScale: 5
 }
 
 export default async function RootLayout({
@@ -45,6 +104,27 @@ export default async function RootLayout({
   return (
     <ClerkProvider>
       <html lang="en" suppressHydrationWarning>
+        <head>
+          <link rel="icon" href="/favicon.ico" sizes="any" />
+          <link
+            rel="icon"
+            type="image/png"
+            sizes="32x32"
+            href="/favicon-32x32.png"
+          />
+          <link
+            rel="icon"
+            type="image/png"
+            sizes="16x16"
+            href="/favicon-16x16.png"
+          />
+          <link
+            rel="apple-touch-icon"
+            sizes="180x180"
+            href="/apple-touch-icon.png"
+          />
+          <link rel="manifest" href="/manifest.json" />
+        </head>
         <body
           className={cn(
             "bg-background mx-auto min-h-screen w-full scroll-smooth antialiased",

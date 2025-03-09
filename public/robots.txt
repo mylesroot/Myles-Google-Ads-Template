@@ -1,0 +1,10 @@
+User-agent: *
+Allow: /
+
+# Block certain paths
+Disallow: /api/
+Disallow: /dashboard/
+Disallow: /admin/
+
+# Sitemap
+Sitemap: https://adconversions.net/sitemap.xml 
