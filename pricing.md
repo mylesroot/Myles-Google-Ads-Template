@@ -28,7 +28,7 @@ Supbase monthly subscription = $35
 - Priority email support
 - Analytics dashboard
 
-### Business Plan - $25/month
+### Agency Plan - $25/month
 
 - 500 credits/month (≈ $3.9 cost, $21.1 profit)
 - All features + API access

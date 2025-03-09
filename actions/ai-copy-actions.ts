@@ -60,7 +60,7 @@ export async function generateCopyAction(
       const credits = profile.credits ?? 0
       const requiredCredits = urlCount * 0.5
 
-      if (credits < requiredCredits) {
+      if (Number(credits) < requiredCredits) {
         return {
           isSuccess: false,
           message: `Insufficient credits: You need ${requiredCredits} credits for ${urlCount} URLs`
@@ -100,8 +100,10 @@ export async function generateCopyAction(
       (profile.membership === "free" || profile.membership === "starter") &&
       profile.credits !== null
     ) {
+      const currentCredits = Number(profile.credits)
+      const deduction = urlCount * 0.5
       await updateProfileAction(userId, {
-        credits: profile.credits - urlCount * 0.5
+        credits: (currentCredits - deduction).toString()
       })
     }
 
@@ -151,7 +153,7 @@ export async function generateSingleCopyAction(
 
     if (profile.membership === "free" || profile.membership === "starter") {
       const credits = profile.credits ?? 0
-      if (credits < 0.5) {
+      if (Number(credits) < 0.5) {
         return {
           isSuccess: false,
           message: "Insufficient credits: You need at least 0.5 credits"
@@ -180,7 +182,10 @@ export async function generateSingleCopyAction(
       (profile.membership === "free" || profile.membership === "starter") &&
       profile.credits !== null
     ) {
-      await updateProfileAction(userId, { credits: profile.credits - 0.5 })
+      const currentCredits = Number(profile.credits)
+      await updateProfileAction(userId, {
+        credits: (currentCredits - 0.5).toString()
+      })
     }
 
     revalidatePath("/rsa-writer")
