@@ -72,7 +72,7 @@ This phase enables users to submit multiple URLs, scrape data using the Firecraw
 
 ---
 
-## Step 5: Build UI Components (Updated)
+## Step 5: Build UI Components ✅
 
 1. **URL Input Form (`components/rsa-writer/url-input-form.tsx`)**:
    - Textarea for bulk URL input (one per line).
@@ -90,7 +90,7 @@ This phase enables users to submit multiple URLs, scrape data using the Firecraw
 
 ---
 
-## Step 6: Implement Dashboard Page (Updated)
+## Step 6: Implement Dashboard Page ✅
 
 1. Update `app/dashboard/page.tsx` to:
    - Authentication is done via middleware at /middleware.ts.

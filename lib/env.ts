@@ -13,6 +13,7 @@ const envSchema = z.object({
     process.env.NODE_ENV === "production"
       ? z.string().min(1, "FIRECRAWL_API_KEY is required in production")
       : z.string().default("test-api-key"),
+  OPENAI_API_KEY: z.string().min(1, "OpenAI API key is required"),
   NODE_ENV: z.enum(["development", "production", "test"]).default("development")
 })
 
@@ -21,6 +22,7 @@ const envSchema = z.object({
 function validateEnv() {
   const env = {
     FIRECRAWL_API_KEY: process.env.FIRECRAWL_API_KEY,
+    OPENAI_API_KEY: process.env.OPENAI_API_KEY,
     NODE_ENV: process.env.NODE_ENV
   }
 
