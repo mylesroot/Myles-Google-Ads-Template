@@ -58,45 +58,109 @@ ${markdownContent}
 Metadata:
 ${JSON.stringify(metadata, null, 2)}
 
-Generate 15 Google Ads headlines (max 30 characters each) and 4 descriptions (max 90 characters each) tailored to this content. Follow these instructions to create compelling, clear ad copy for an eCommerce audience:
+Your Main Goal
 
-### Context
-- The ad targets searchers looking for products/collections like those on the page.
-- Searchers may use queries reflecting: 
-  1. Direct questions (e.g., "Where to buy [product]?")
-  2. Desired answers (e.g., "[Product] for sale")
-  3. Problems (e.g., "Need [product] fast")
-  4. Symptoms (e.g., "No [product] nearby")
-  5. Causes (e.g., "Pet stores near me")
-- Focus on info-gathering searchers in the research or purchase phase.
+You are an expert copywriter, and your job is to generate 15 Google Ads headlines (max 30 characters each) and 4 descriptions (max 90 characters each) from the above information in markdown that I've provided.
 
-### Ad Copy Goals
-- Attract the "perfect searcher" who wants this product/collection.
-- Repel irrelevant searchers with specific, qualifying language.
-- Stand out with clear benefits, not features, using simple words (6-year-old level).
-- Align with searcher intent from the data (e.g., title, description, markdown).
+Don't be lazy, you must read all of the information, and follow all of these instructions exactly.
 
-### Headline Instructions (15 total)
-- **Headlines 1-5**: Should contain any unique value proposition, offer, and brand name. E.g. "[Brand Name] [Product Name]" Use keywords from metadata if relevant.
-- **Headlines 6-10**: Highlight key benefits and trust factors (e.g., "Fast Shipping, 5-Star Rated"). Add qualifying details to filter searchers. Make sure to include specific numbers, shipping times, etc...
-- **Headlines 11-15**: Use strong, action-oriented CTAs. Ensure variety. Don't just use "Buy Now" or "Shop Now", use something that makes sense for the product and make it different.
-- Keep each headline under 30 characters.
-- Use specific numbers (e.g., "57% Off"), times (e.g., "Ships in 24 Hrs"), or locations if in data.
-- Add social proof (e.g., "1000+ Happy Buyers") where possible if there's data.
+Keep working until you have read all the instructions, and generated 15 headlines, and 4 descriptions.
 
-### Description Instructions (4 total)
-- Write 4 descriptions, each under 90 characters.
-- Focus on benefits (e.g., "Solve [problem] with [product]").
-- Include a CTA in at least one description (e.g., "Order Today!").
-- Use simple words, urgency (e.g., "Limited Stock"), and trust (e.g., "Top-Rated"). But again be specific, and use the data provided.
-- Pull from markdown or metadata for inspiration, but prioritize searcher needs.
+Context On Product/Service
 
-### Tone & Style
-- Clear and direct, not creative or "on-brand."
-- Urgent, helpful, and benefit-focused.
-- Avoid jargon or vague promises.
+Converting Search Terms: 
 
-### Output Format
+rabbit hutch, outdoor rabbit hutch
+
+Target Audience
+
+Families with kids and pets, rabbit enthusiasts, or first-time rabbit owners looking for durable outdoor solutions.
+
+General Instructions
+
+Attract the "perfect searcher" in our target audience who wants this product/collection by being specific, and answering their question with information. What are their pain points and desires.
+
+Emphasize unique features like the natural wood design, spacious layout for multiple rabbits, or the free rain cover’s weatherproofing. Avoid generic adjectives (e.g., ‘great,’ ‘best’) unless tied to a specific proof point.
+
+For ‘Problems,’ address specific rabbit owner pain points (e.g., ‘rabbits escaping,’ ‘wet hutches,’ ‘cramped cages’, 'predators getting in'). For ‘Desired Answers,’ tie to emotional outcomes (e.g., ‘happy rabbits,’ ‘proud kids’).
+
+Use review quotes creatively (e.g., ‘Rabbits Are Happy!’) and weave specific numbers into benefits (e.g., ‘56 Bunny Owners Agree’). Avoid repeating exact phrases like ‘Ships in 48 Hrs’ across headlines or descriptions.
+
+Ensure variety. Don’t just use ‘Buy Now’” with “Craft CTAs that evoke urgency and excitement tied to the product (e.g., ‘Save Your Hutch Spot,’ ‘Snag the Rain Cover Deal’
+
+Incorporate emotional triggers (e.g., joy, relief, pride) in at least 5 headlines and 2 descriptions, based on customer reviews or product benefits.
+
+Use clear, simple language, and speak like a human.
+
+Use benefits, not features, in the copy.
+
+Don't over-rely on basic benefits. Terms like “sturdy,” “spacious,” and “fast shipping” are common in e-commerce ads and don’t differentiate from competitors. Use specific information, that's different.
+
+How People Search On Google
+
+The ad targets searchers looking for products/collections like those on the page.
+
+Searchers may use queries reflecting:
+
+Direct (e.g., "Buy [product] near me", "[product] for sale", "[product]" )
+
+You would answer this search with a headline like ("[product/service name] in [location]", "[brand] [product/service]", "[feature][product] for sale")
+
+Desired answers (e.g., "Best [product/service] for [problem or goal]", "[Product/service] that [delivers specific result]", "Where to find [product/service] to fix [issue]", "Where to buy [product]?", "How does [product/service] work?", "What is the best [product/service] for [desired outcome]?", "Why does [product/service] help with [specific issue]?")
+
+You would answer this search with a headline like, ("[product] for [problem]", "fix [problem] with [product]", "best [product] for [problem]"
+
+Problems (e.g., "How to fix [problem] with [product category/service]?", "Solutions for [problem description] near me", "Why do I keep having [problem] and how to stop it?")
+
+Symptoms (e.g., "[Symptom] after using [product category]", "How to stop [symptom] with [product/service]?", "What causes [symptom] and how to fix it?")
+
+Causes of the problem. Think about the root issue that would lead people to search for the solution.
+
+Headline Instructions (15 total)
+
+Keep each headline under 30 characters. This is very important.
+
+Headlines 1-5: Should contain any unique value proposition, offer, and brand name. E.g. "[Brand Name] [Product Name]" Use keywords from metadata if relevant. Example formats ("[product/service name] in [location]", "[brand] [product/service]", "[unique value proposition][product] for sale"). 
+
+Headlines 6-10: Highlight key benefits and trust factors (e.g., "Fast Shipping, 5-Star Rated"). Add qualifying details to filter searchers. Make sure to include specific numbers, shipping times, service details.
+
+Headlines 11-15: Use strong, action-oriented CTAs. Ensure variety. Don't just use "Buy Now" or "Shop Now", use something that makes sense for the product and make it different.
+
+
+Use specific numbers (e.g., "57% Off"), times (e.g., "Ships in 24 Hrs"), or locations if in context.
+
+Add social proof (e.g., "1000+ Happy Buyers") where possible if there's data.
+
+Don't include any exclamation marks or capitalisation of words.
+
+Description Instructions (4 total)
+
+Write 4 descriptions, each under 90 characters but more than 70 characters.
+
+Focus on describing how the benefits in the headlines are achieved. 
+
+Focus on one 'benefit' in each description. E.g. Description 1: Free shipping, Description 2: High Quality. These benefits and descriptions should be specific to the 'context' you were given.
+
+Include a CTA in at least one description (e.g., "Order Today!").
+
+Use simple words.
+
+Don't include any exclamation marks or capitalisation of words.
+
+Tone & Style
+
+Clear and direct, not creative or "on-brand."
+
+Urgent, helpful, and benefit-focused.
+
+Avoid jargon or vague promises.
+
+Output Format
+
+Keep each headline under 30 characters. This is very important.
+
+Don't include any exclamation marks or capitalisation of words.
+
 Return ONLY a JSON object with this format:
 {
     "headlines": ["headline1", "headline2", ...],
