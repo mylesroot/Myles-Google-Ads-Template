@@ -45,12 +45,29 @@ export function Hero() {
               generate copy with{" "}
               <strong>AI trained for Google Search Ads</strong>.
             </p>
+
             <div className="mt-10 flex items-center justify-center">
               <Button size="lg" onClick={handleHeroClick} asChild>
                 <Link href="/signup">
-                  Start Saving Time & Impressing Your Boss
+                  Start Saving Time (Create 5 Ads Free)
                 </Link>
               </Button>
+            </div>
+            {/* Demo Video */}
+            <div className="my-8 flex justify-center">
+              <div className="w-full max-w-3xl overflow-hidden rounded-xl shadow-lg">
+                <video
+                  className="w-full"
+                  autoPlay
+                  loop
+                  muted
+                  playsInline
+                  controls={false}
+                >
+                  <source src="/demo1.mp4" type="video/mp4" />
+                  Your browser does not support the video tag.
+                </video>
+              </div>
             </div>
           </div>
         </div>
