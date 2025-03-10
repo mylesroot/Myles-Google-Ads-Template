@@ -53,18 +53,19 @@ export async function generateCopyAction(
     const scrapedDataObj = project.scrapedData as Record<string, any>
     const urlCount = Object.keys(scrapedDataObj).length
 
+    // Free tier is limited to 5 URLs
     if (profile.membership === "free" && urlCount > 5) {
       return { isSuccess: false, message: "Free tier limited to 5 URLs" }
     }
-    if (profile.membership === "free" || profile.membership === "starter") {
-      const credits = profile.credits ?? 0
-      const requiredCredits = urlCount * 0.5
 
-      if (Number(credits) < requiredCredits) {
-        return {
-          isSuccess: false,
-          message: `Insufficient credits: You need ${requiredCredits} credits for ${urlCount} URLs`
-        }
+    // Check if user has enough credits
+    const credits = profile.credits ?? 0
+    const requiredCredits = urlCount * 0.5
+
+    if (Number(credits) < requiredCredits) {
+      return {
+        isSuccess: false,
+        message: `Insufficient credits: You need ${requiredCredits} credits for ${urlCount} URLs`
       }
     }
 
@@ -96,10 +97,7 @@ export async function generateCopyAction(
 
     await updateProjectAction(projectId, { generatedCopy, status: "completed" })
 
-    if (
-      (profile.membership === "free" || profile.membership === "starter") &&
-      profile.credits !== null
-    ) {
+    if (profile.credits !== null) {
       const currentCredits = Number(profile.credits)
       const deduction = urlCount * 0.5
       await updateProfileAction(userId, {
@@ -151,13 +149,12 @@ export async function generateSingleCopyAction(
       return { isSuccess: false, message: "URL not found in scraped data" }
     }
 
-    if (profile.membership === "free" || profile.membership === "starter") {
-      const credits = profile.credits ?? 0
-      if (Number(credits) < 0.5) {
-        return {
-          isSuccess: false,
-          message: "Insufficient credits: You need at least 0.5 credits"
-        }
+    // Check if user has enough credits
+    const credits = profile.credits ?? 0
+    if (Number(credits) < 0.5) {
+      return {
+        isSuccess: false,
+        message: "Insufficient credits: You need at least 0.5 credits"
       }
     }
 
@@ -178,10 +175,7 @@ export async function generateSingleCopyAction(
 
     await updateProjectAction(projectId, { generatedCopy })
 
-    if (
-      (profile.membership === "free" || profile.membership === "starter") &&
-      profile.credits !== null
-    ) {
+    if (profile.credits !== null) {
       const currentCredits = Number(profile.credits)
       await updateProfileAction(userId, {
         credits: (currentCredits - 0.5).toString()
