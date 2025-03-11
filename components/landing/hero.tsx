@@ -4,11 +4,19 @@ import { Button } from "@/components/ui/button"
 import { ArrowRight } from "lucide-react"
 import Link from "next/link"
 import posthog from "posthog-js"
+import { useEffect } from "react"
 
 export function Hero() {
   const handleHeroClick = () => {
     posthog.capture("clicked_buy_hero")
   }
+
+  useEffect(() => {
+    const video = document.getElementById("demoVideo") as HTMLVideoElement
+    if (video) {
+      video.playbackRate = 2.0
+    }
+  }, [])
 
   return (
     <div className="relative isolate">
@@ -54,7 +62,7 @@ export function Hero() {
               </Button>
             </div>
             {/* Demo Video */}
-            <div className="my-8 flex justify-center">
+            <div className="my-8 flex flex-col items-center justify-center">
               <div className="w-full max-w-3xl overflow-hidden rounded-xl shadow-lg">
                 <video
                   className="w-full"
@@ -62,7 +70,8 @@ export function Hero() {
                   loop
                   muted
                   playsInline
-                  controls={false}
+                  controls={true}
+                  id="demoVideo"
                 >
                   <source src="/demo1.mp4" type="video/mp4" />
                   Your browser does not support the video tag.
