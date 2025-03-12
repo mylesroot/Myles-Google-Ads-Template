@@ -1,43 +1,37 @@
 import { MetadataRoute } from "next"
+import { getPublishedPostsAction } from "@/actions/db/blog-posts-actions"
+import { getCategoriesAction } from "@/actions/db/blog-categories-actions"
 
-// This would typically come from your CMS or API
-const getAllPosts = () => {
-  return [
-    {
-      slug: "effective-google-ads-strategies",
-      publishedDate: "2024-04-15T10:00:00Z",
-      modifiedDate: "2024-04-16T14:30:00Z"
-    },
-    {
-      slug: "writing-compelling-ad-copy",
-      publishedDate: "2024-04-10T10:00:00Z",
-      modifiedDate: "2024-04-10T10:00:00Z"
-    },
-    {
-      slug: "ppc-campaign-optimization",
-      publishedDate: "2024-04-05T10:00:00Z",
-      modifiedDate: "2024-04-07T15:20:00Z"
-    },
-    {
-      slug: "landing-page-conversion-tips",
-      publishedDate: "2024-03-28T10:00:00Z",
-      modifiedDate: "2024-03-30T09:15:00Z"
-    }
-  ]
+// Fetch posts from the database
+const getAllPosts = async () => {
+  const { isSuccess, data } = await getPublishedPostsAction(100, 0)
+
+  if (!isSuccess || !data) {
+    console.error("Failed to fetch posts for sitemap")
+    return []
+  }
+
+  return data.map(post => ({
+    slug: post.slug,
+    publishedDate:
+      post.publishedAt?.toISOString() || post.createdAt.toISOString(),
+    modifiedDate: post.updatedAt.toISOString()
+  }))
 }
 
-// This would typically come from your CMS or API
-const getAllCategories = () => {
-  return [
-    "google-ads",
-    "ppc",
-    "digital-marketing",
-    "conversion-optimization",
-    "ad-copy"
-  ]
+// Fetch categories from the database
+const getAllCategories = async () => {
+  const { isSuccess, data } = await getCategoriesAction()
+
+  if (!isSuccess || !data) {
+    console.error("Failed to fetch categories for sitemap")
+    return []
+  }
+
+  return data.map(category => category.slug)
 }
 
-export default function sitemap(): MetadataRoute.Sitemap {
+export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const baseUrl = "https://adconversions.net"
 
   // Main pages
@@ -45,52 +39,50 @@ export default function sitemap(): MetadataRoute.Sitemap {
     {
       url: baseUrl,
       lastModified: new Date(),
-      changeFrequency: "weekly",
       priority: 1.0
     },
     {
       url: `${baseUrl}/blog`,
       lastModified: new Date(),
-      changeFrequency: "daily",
       priority: 0.9
     },
     {
       url: `${baseUrl}/pricing`,
       lastModified: new Date(),
-      changeFrequency: "monthly",
       priority: 0.8
     },
     {
       url: `${baseUrl}/about`,
       lastModified: new Date(),
-      changeFrequency: "monthly",
       priority: 0.7
     },
     {
       url: `${baseUrl}/contact`,
       lastModified: new Date(),
-      changeFrequency: "monthly",
       priority: 0.7
+    },
+    {
+      url: `${baseUrl}/rsa-writer`,
+      lastModified: new Date(),
+      priority: 0.9
     }
-  ] as MetadataRoute.Sitemap
+  ]
 
   // Blog posts
-  const posts = getAllPosts()
+  const posts = await getAllPosts()
   const blogPostsPages = posts.map(post => ({
     url: `${baseUrl}/blog/${post.slug}`,
     lastModified: new Date(post.modifiedDate),
-    changeFrequency: "monthly",
     priority: 0.8
-  })) as MetadataRoute.Sitemap
+  }))
 
   // Categories
-  const categories = getAllCategories()
+  const categories = await getAllCategories()
   const categoryPages = categories.map(category => ({
     url: `${baseUrl}/blog/categories/${category}`,
     lastModified: new Date(),
-    changeFrequency: "weekly",
     priority: 0.7
-  })) as MetadataRoute.Sitemap
+  }))
 
   return [...mainPages, ...blogPostsPages, ...categoryPages]
 }
