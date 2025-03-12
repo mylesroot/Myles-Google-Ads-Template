@@ -18,6 +18,7 @@ import { Menu, X } from "lucide-react"
 import Link from "next/link"
 import Image from "next/image"
 import { useEffect, useState } from "react"
+import { usePathname } from "next/navigation"
 
 // Navigation links that will scroll to sections
 const navLinks = [
@@ -31,6 +32,10 @@ const signedInLinks = [{ href: "/rsa-writer", label: "Dashboard" }]
 export default function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
   const [isScrolled, setIsScrolled] = useState(false)
+  const pathname = usePathname()
+
+  // Check if current path is a blog path
+  const isBlogPath = pathname?.includes("/blog")
 
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen)
@@ -80,30 +85,40 @@ export default function Header() {
           </Link>
         </div>
 
-        <nav className="absolute left-1/2 hidden -translate-x-1/2 space-x-6 font-medium md:flex">
-          {navLinks.map(link => (
-            <a
-              key={link.href}
-              href={link.href}
-              onClick={e => scrollToSection(e, link.href)}
-              className="text-muted-foreground hover:text-foreground rounded-md px-3 py-2 text-sm font-medium"
-            >
-              {link.label}
-            </a>
-          ))}
-
-          <SignedIn>
-            {signedInLinks.map(link => (
-              <Link
+        {/* Only show navigation links if not on a blog page */}
+        {!isBlogPath && (
+          <nav className="absolute left-1/2 hidden -translate-x-1/2 space-x-6 font-medium md:flex">
+            {navLinks.map(link => (
+              <a
                 key={link.href}
                 href={link.href}
+                onClick={e => scrollToSection(e, link.href)}
                 className="text-muted-foreground hover:text-foreground rounded-md px-3 py-2 text-sm font-medium"
               >
                 {link.label}
-              </Link>
+              </a>
             ))}
-          </SignedIn>
-        </nav>
+
+            <Link
+              href="/blog"
+              className="text-muted-foreground hover:text-foreground rounded-md px-3 py-2 text-sm font-medium"
+            >
+              Blog
+            </Link>
+
+            <SignedIn>
+              {signedInLinks.map(link => (
+                <Link
+                  key={link.href}
+                  href={link.href}
+                  className="text-muted-foreground hover:text-foreground rounded-md px-3 py-2 text-sm font-medium"
+                >
+                  {link.label}
+                </Link>
+              ))}
+            </SignedIn>
+          </nav>
+        )}
 
         <div className="flex items-center space-x-4">
           <SignedOut>
@@ -162,30 +177,47 @@ export default function Header() {
                 Home
               </Link>
             </li>
-            {navLinks.map(link => (
-              <li key={link.href}>
-                <a
-                  href={link.href}
+            {/* Only show navigation links if not on a blog page */}
+            {!isBlogPath && (
+              <>
+                {navLinks.map(link => (
+                  <li key={link.href}>
+                    <a
+                      href={link.href}
+                      className="text-muted-foreground hover:text-foreground block text-sm font-medium"
+                      onClick={e => scrollToSection(e, link.href)}
+                    >
+                      {link.label}
+                    </a>
+                  </li>
+                ))}
+                <SignedIn>
+                  {signedInLinks.map(link => (
+                    <li key={link.href}>
+                      <Link
+                        href={link.href}
+                        className="text-muted-foreground hover:text-foreground block text-sm font-medium"
+                        onClick={toggleMenu}
+                      >
+                        {link.label}
+                      </Link>
+                    </li>
+                  ))}
+                </SignedIn>
+              </>
+            )}
+            {/* Always show blog link if not already on blog page */}
+            {!pathname?.startsWith("/blog") && (
+              <li>
+                <Link
+                  href="/blog"
                   className="text-muted-foreground hover:text-foreground block text-sm font-medium"
-                  onClick={e => scrollToSection(e, link.href)}
+                  onClick={toggleMenu}
                 >
-                  {link.label}
-                </a>
+                  Blog
+                </Link>
               </li>
-            ))}
-            <SignedIn>
-              {signedInLinks.map(link => (
-                <li key={link.href}>
-                  <Link
-                    href={link.href}
-                    className="text-muted-foreground hover:text-foreground block text-sm font-medium"
-                    onClick={toggleMenu}
-                  >
-                    {link.label}
-                  </Link>
-                </li>
-              ))}
-            </SignedIn>
+            )}
             <SignedOut>
               <li className="pt-2">
                 <SignInButton>

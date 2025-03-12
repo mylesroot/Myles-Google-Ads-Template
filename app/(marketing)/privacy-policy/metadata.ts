@@ -1,6 +1,8 @@
 import type { Metadata } from "next"
 
-export const metadata: Metadata = {
-  title: "Privacy Policy | Ad Conversions",
-  description: "Privacy Policy for Ad Conversions platform"
+export async function generateMetadata(): Promise<Metadata> {
+  return {
+    title: "Privacy Policy | Ad Conversions",
+    description: "Privacy Policy for Ad Conversions platform"
+  }
 }

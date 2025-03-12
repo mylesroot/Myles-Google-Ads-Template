@@ -8,12 +8,14 @@ import { LandingPage } from "@/components/landing"
 import { Metadata } from "next"
 import StructuredData from "@/components/utilities/structured-data"
 
-export const metadata: Metadata = {
-  title: "Ad Conversions | Powerful Google Ads Tools for Better Campaigns",
-  description:
-    "Improve your Google Ads performance with our RSA writer and optimization tools. Boost conversions and lower CPA in minutes.",
-  alternates: {
-    canonical: "/"
+export async function generateMetadata(): Promise<Metadata> {
+  return {
+    title: "Ad Conversions | Powerful Google Ads Tools for Better Campaigns",
+    description:
+      "Improve your Google Ads performance with our RSA writer and optimization tools. Boost conversions and lower CPA in minutes.",
+    alternates: {
+      canonical: "/"
+    }
   }
 }
 
